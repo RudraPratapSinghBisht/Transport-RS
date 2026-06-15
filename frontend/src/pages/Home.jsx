@@ -6,6 +6,7 @@ import baliImg from "../assets/bali.png";
 import kyotoImg from "../assets/kyoto.png";
 import swissImg from "../assets/swiss.png";
 import compassLogo from "../assets/compass.png";
+import heroVideo from "../assets/Herovideo.mp4";
 import japan from "../assets/japan.jpg";
 import switzerland from "../assets/switzerland.jpg";
 import turkiye from "../assets/turkiye.jpg";
@@ -13,45 +14,6 @@ import beachImg from "../assets/beach.jpg";
 import adventureImg from "../assets/adventure.jpg";
 import historicalImg from "../assets/historical.jpg";
 import luxuryImg from "../assets/luxury.jpg";
-
-const getYouTubeEmbedUrl = (url) => {
-  if (!url) {
-    return "";
-  }
-
-  try {
-    const parsedUrl = new URL(url);
-    const host = parsedUrl.hostname.replace("www.", "");
-
-    let videoId = "";
-
-    if (host === "youtu.be") {
-      videoId = parsedUrl.pathname.slice(1);
-    } else if (parsedUrl.pathname.startsWith("/embed/")) {
-      videoId = parsedUrl.pathname.split("/embed/")[1];
-    } else if (parsedUrl.pathname.startsWith("/shorts/")) {
-      videoId = parsedUrl.pathname.split("/shorts/")[1];
-    } else {
-      videoId = parsedUrl.searchParams.get("v") || "";
-    }
-
-    videoId = videoId.split(/[/?#&]/)[0];
-
-    if (!videoId) {
-      return url;
-    }
-
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&rel=0&modestbranding=1&playsinline=1`;
-  } catch {
-    return url;
-  }
-};
-
-const heroVideoUrl = getYouTubeEmbedUrl(
-  import.meta.env.VITE_HERO_VIDEO_URL ||
-    "https://youtu.be/TLYYxpjJrC4"
-);
-
 function Home() {
   const navigate = useNavigate();
 
@@ -64,19 +26,10 @@ const userName =
 
 const [destination, setDestination] =
   useState("");
-const [showHeroVideo, setShowHeroVideo] =
-  useState(false);
   const [hoveredCard, setHoveredCard] =
   useState(null);
   const [featuredPackages, setFeaturedPackages] =
   useState([]);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowHeroVideo(true);
-    }, 2500);
-
-    return () => clearTimeout(timeout);
-  }, []);
   useEffect(() => {
   fetchFeaturedPackages();
   fetchStays();
@@ -311,32 +264,25 @@ const fetchStays = async () => {
     position: "relative",
     overflow: "hidden",
     marginTop: "0",
-    backgroundImage: `url(${switzerland})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
   }}
 >
-  {heroVideoUrl && (
-    <iframe
-      title="Horizon Compass hero video"
-      src={heroVideoUrl}
-      allow="autoplay; encrypted-media; picture-in-picture"
-      allowFullScreen
-      style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        width: "max(100vw, 177.78vh)",
-        height: "max(100vh, 56.25vw)",
-        transform: "translate(-50%, -50%)",
-        border: 0,
-        opacity: showHeroVideo ? 1 : 0,
-        pointerEvents: "none",
-        transition: "opacity 0.8s ease",
-        zIndex: 0,
-      }}
-    />
-  )}
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      zIndex: 0,
+    }}
+  >
+    <source src={heroVideo} type="video/mp4" />
+  </video>
 
   {/* Dark Overlay */}
   <div
