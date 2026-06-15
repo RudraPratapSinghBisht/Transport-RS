@@ -13,6 +13,10 @@ const razorpay = new Razorpay({
 router.post(
   "/create-order",
   async (req, res) => {
+     console.log(
+      "Create Order Request:",
+      req.body
+    );
     try {
       const { amount } = req.body;
 
@@ -24,8 +28,10 @@ router.post(
 
       res.json(order);
     } catch (error) {
-      console.error(error);
-
+      console.error(
+  "Razorpay Error:",
+  error
+);
       res.status(500).json({
         message:
           "Order creation failed",
