@@ -44,7 +44,7 @@ function AdminDashboard() {
       className="d-flex"
       style={{
         minHeight: "100vh",
-        backgroundColor: "#111827",
+        backgroundColor: "#000000",
       }}
     >
       {/* Sidebar */}
@@ -52,7 +52,7 @@ function AdminDashboard() {
         style={{
           width: "250px",
           background:
-            "linear-gradient(to bottom, #0A1931, #081224)",
+            "linear-gradient(to bottom, #000000, #000000)",
           color: "white",
           padding: "20px",
         }}
@@ -71,7 +71,7 @@ function AdminDashboard() {
           <button
             className="btn text-start"
             style={{
-              backgroundColor: "#1F2937",
+              backgroundColor: "#113d79",
               color: "white",
               border: "none",
             }}
@@ -82,7 +82,7 @@ function AdminDashboard() {
           <button
             className="btn text-start"
             style={{
-              backgroundColor: "#1F2937",
+              backgroundColor: "#113d79",
               color: "white",
               border: "none",
             }}
@@ -93,21 +93,24 @@ function AdminDashboard() {
             Packages
           </button>
 
-          <button
-            className="btn text-start"
-            style={{
-              backgroundColor: "#1F2937",
-              color: "white",
-              border: "none",
-            }}
-          >
-            Stays
-          </button>
+        <button
+  className="btn text-start"
+  style={{
+    backgroundColor: "#113d79",
+    color: "white",
+    border: "none",
+  }}
+  onClick={() =>
+    navigate("/admin/stays")
+  }
+>
+  Stays
+</button>
 
          <button
   className="btn text-start"
   style={{
-    backgroundColor: "#1F2937",
+    backgroundColor: "#113d79",
     color: "white",
     border: "none",
   }}
@@ -121,7 +124,7 @@ function AdminDashboard() {
           <button
             className="btn text-start"
             style={{
-              backgroundColor: "#1F2937",
+              backgroundColor: "#113d79",
               color: "white",
               border: "none",
             }}
@@ -150,7 +153,7 @@ function AdminDashboard() {
       <div
         className="flex-grow-1 p-4"
         style={{
-          backgroundColor: "#111827",
+          backgroundColor: "#000000",
           color: "white",
         }}
       >
@@ -169,9 +172,9 @@ function AdminDashboard() {
             <div
               className="card p-4 shadow-sm text-center"
               style={{
-                backgroundColor: "#1F2937",
+                backgroundColor: "#113d79",
                 color: "white",
-                border: "1px solid #374151",
+                border: "4px solid #c99f15",
               }}
             >
               <h5>Total Users</h5>
@@ -192,9 +195,9 @@ function AdminDashboard() {
             <div
               className="card p-4 shadow-sm text-center"
               style={{
-                backgroundColor: "#1F2937",
+                backgroundColor: "#113d79",
                 color: "white",
-                border: "1px solid #374151",
+                border: "4px solid #c99f15",
               }}
             >
               <h5>Total Bookings</h5>
@@ -215,9 +218,9 @@ function AdminDashboard() {
             <div
               className="card p-4 shadow-sm text-center"
               style={{
-                backgroundColor: "#1F2937",
+                backgroundColor: "#113d79",
                 color: "white",
-                border: "1px solid #374151",
+                border: "4px solid #c99f15",
               }}
             >
               <h5>Total Packages</h5>
@@ -238,9 +241,9 @@ function AdminDashboard() {
             <div
               className="card p-4 shadow-sm text-center"
               style={{
-                backgroundColor: "#1F2937",
+                backgroundColor: "#113d79",
                 color: "white",
-                border: "1px solid #374151",
+                border: "4px solid #c99f15",
               }}
             >
               <h5>Revenue</h5>
@@ -261,8 +264,8 @@ function AdminDashboard() {
         <div
           className="card mt-5 p-4"
           style={{
-            backgroundColor: "#1F2937",
-            border: "1px solid #374151",
+            backgroundColor: "#113d79",
+            border: "4px solid #c99f15",
             color: "white",
           }}
         >

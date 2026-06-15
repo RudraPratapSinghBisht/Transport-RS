@@ -10,12 +10,14 @@ function ManagePackages() {
   const [editingId, setEditingId] = useState(null);
 
   const [packageData, setPackageData] = useState({
-    title: "",
-    city: "",
-    duration: "",
-    price: "",
-    image: "",
-    description: "",
+  title: "",
+  city: "",
+  country: "",
+  duration: "",
+  price: "",
+  image: "",
+  description: "",
+  includes: ""
   });
 
   const fetchPackages = async () => {
@@ -41,18 +43,28 @@ function ManagePackages() {
   }, [navigate]);
 
   const handleSavePackage = async () => {
-    try {
+
+  const formattedPackage = {
+    ...packageData,
+
+    includes: packageData.includes
+      .split("\n")
+      .map(item => item.trim())
+      .filter(Boolean),
+  };
+
+  try {
       if (editingId) {
         await axios.put(
           `http://localhost:5000/api/packages/${editingId}`,
-          packageData
+          formattedPackage
         );
 
         alert("Package Updated Successfully!");
       } else {
         await axios.post(
           "http://localhost:5000/api/packages",
-          packageData
+          formattedPackage
         );
 
         alert("Package Added Successfully!");
@@ -61,10 +73,12 @@ function ManagePackages() {
       setPackageData({
         title: "",
         city: "",
+        country: "",
         duration: "",
         price: "",
         image: "",
         description: "",
+        includes: "",
       });
 
       setEditingId(null);
@@ -81,10 +95,14 @@ function ManagePackages() {
     setPackageData({
       title: pkg.title,
       city: pkg.city,
+      country: pkg.country,
       duration: pkg.duration,
       price: pkg.price,
       image: pkg.image,
       description: pkg.description,
+      includes: Array.isArray(pkg.includes)
+  ? pkg.includes.join("\n")
+  : "",
     });
 
     setEditingId(pkg._id);
@@ -104,11 +122,12 @@ function ManagePackages() {
       console.error(error);
     }
   };
-    return (
+
+  return (
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#111827",
+        backgroundColor: "#000000",
         color: "white",
         padding: "30px",
       }}
@@ -136,10 +155,12 @@ function ManagePackages() {
             setPackageData({
               title: "",
               city: "",
+              country: "",
               duration: "",
               price: "",
               image: "",
               description: "",
+              includes: "",
             });
 
             setShowForm(!showForm);
@@ -153,9 +174,9 @@ function ManagePackages() {
         <div
           className="card p-4 mb-4"
           style={{
-            backgroundColor: "#1F2937",
+            backgroundColor: "#194084",
             color: "white",
-            border: "1px solid #374151",
+            border: "1px solid #d59f09",
           }}
         >
           <h3
@@ -197,6 +218,20 @@ function ManagePackages() {
                 }
               />
             </div>
+            <div className="col-md-6 mb-3">
+  <input
+    type="text"
+    className="form-control"
+    placeholder="Country"
+    value={packageData.country}
+    onChange={(e) =>
+      setPackageData({
+        ...packageData,
+        country: e.target.value,
+      })
+    }
+  />
+</div>
 
             <div className="col-md-6 mb-3">
               <input
@@ -257,6 +292,20 @@ function ManagePackages() {
                 }
               />
             </div>
+            <div className="col-12 mb-3">
+  <textarea
+    className="form-control"
+    rows="4"
+    placeholder="Includes (one per line)"
+    value={packageData.includes}
+    onChange={(e) =>
+      setPackageData({
+        ...packageData,
+        includes: e.target.value,
+      })
+    }
+  />
+</div>
 
             <div className="col-12">
               <button
@@ -286,9 +335,9 @@ function ManagePackages() {
             <div
               className="card h-100"
               style={{
-                backgroundColor: "#1F2937",
+                backgroundColor: "#000000",
                 color: "white",
-                border: "1px solid #374151",
+                border: "3px solid #164598",
               }}
             >
               <img
@@ -312,6 +361,9 @@ function ManagePackages() {
                 <p>
                   <strong>City:</strong> {pkg.city}
                 </p>
+                <p>
+                  <strong>Country:</strong> {pkg.country}
+                </p>
 
                 <p>
                   <strong>Duration:</strong> {pkg.duration}
@@ -322,6 +374,10 @@ function ManagePackages() {
                 </p>
 
                 <p>{pkg.description}</p>
+
+                <p>
+                  <strong>Includes:</strong>
+                </p>
 
                 <button
                   className="btn btn-warning w-100 mb-2"

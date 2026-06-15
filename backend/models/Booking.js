@@ -26,6 +26,15 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    phone: String,
+
+age: Number,
+
+gender: String,
+
+nationality: String,
+
+state: String,
 
     status: {
       type: String,
@@ -36,13 +45,9 @@ const BookingSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-  },
-  {
+  },{
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model(
-  "Booking",
-  BookingSchema
-);
+module.exports = mongoose.model("Booking", BookingSchema);

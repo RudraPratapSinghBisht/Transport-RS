@@ -50,3 +50,29 @@ body {
 .form-select {
   color: white !important;
 }
+.form-control::placeholder {
+  color: #6c757d !important;
+  opacity: 1;
+}
+.stay-card {
+  transition: all 0.3s ease;
+}
+
+.stay-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.4) !important;
+}
+/* Premium Hover Effect */
+
+.premium-card {
+  transition: all 0.35s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.45) !important;
+}
+.arrow-btn:hover {
+  transform: scale(1.15);
+  color: white;
+}

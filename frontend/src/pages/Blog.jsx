@@ -41,7 +41,7 @@ function Blog() {
   <div
     className="container-fluid py-5"
     style={{
-      backgroundColor: "#111827",
+      backgroundColor: "#000000",
       minHeight: "100vh",
       color: "white",
     }}
@@ -66,9 +66,9 @@ function Blog() {
             <div
   className="card h-100"
   style={{
-    backgroundColor: "#1F2937",
+    backgroundColor: "#000000",
     color: "white",
-    border: "1px solid #374151",
+    border: "1px solid #d4a525",
     transition: "0.3s",
     cursor: "pointer",
   }}

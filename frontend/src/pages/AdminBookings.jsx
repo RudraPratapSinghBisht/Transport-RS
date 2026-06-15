@@ -40,7 +40,7 @@ function AdminBookings() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#111827",
+        backgroundColor: "#000000",
         color: "white",
         padding: "30px",
       }}
@@ -63,7 +63,8 @@ function AdminBookings() {
            <div
   className="card p-3"
   style={{
-    backgroundColor: "#1F2937",
+    backgroundColor: "#000000",
+    border: "3px solid #cf1212",
     color: "white",
   }}
 >
@@ -78,11 +79,62 @@ function AdminBookings() {
     <strong>Email:</strong>
     {booking.email}
   </p>
-
   <p>
-    <strong>Status:</strong>
+  <strong>Phone:</strong>{" "}
+  {booking.phone || "N/A"}
+</p>
+
+<p>
+  <strong>Age:</strong>{" "}
+  {booking.age || "N/A"}
+</p>
+
+<p>
+  <strong>Gender:</strong>{" "}
+  {booking.gender || "N/A"}
+</p>
+
+<p>
+  <strong>Nationality:</strong>{" "}
+  {booking.nationality || "N/A"}
+</p>
+
+<p>
+  <strong>State:</strong>{" "}
+  {booking.state || "N/A"}
+</p>
+
+<p>
+  <strong>Amount:</strong> ₹
+  {booking.price?.toLocaleString()}
+</p>
+
+<p>
+  <strong>Booking Date:</strong>{" "}
+  {new Date(
+    booking.bookingDate
+  ).toLocaleDateString()}
+</p>
+
+ <p>
+  <strong>Status:</strong>{" "}
+
+  <span
+    style={{
+      color:
+        booking.status ===
+        "Approved"
+          ? "#28a745"
+          : booking.status ===
+            "Rejected"
+          ? "#dc3545"
+          : "#D4AF37",
+      fontWeight: "bold",
+    }}
+  >
     {booking.status}
-  </p>
+  </span>
+</p>
 
   <div className="d-flex gap-2 mt-3">
     <button

@@ -27,7 +27,7 @@ function MyBookings() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#111827",
+        backgroundColor: "#000000",
         color: "white",
         padding: "30px",
       }}
@@ -50,27 +50,87 @@ function MyBookings() {
             <div
               className="card p-3"
               style={{
-                backgroundColor: "#1F2937",
+                backgroundColor: "#000000",
+                border: "3px solid #121bcf",
                 color: "white",
               }}
             >
-              <h4>{booking.packageTitle}</h4>
+              <h4
+  style={{
+    color: "#D4AF37",
+    fontWeight: "700",
+  }}
+>
+  {booking.packageTitle}
+</h4>
+<p>
+  <strong>Booked By:</strong>{" "}
+  {booking.userName}
+</p>
 
-              <p>
-                Price: ₹
-                {booking.price?.toLocaleString()}
-              </p>
+<p>
+  <strong>Email:</strong>{" "}
+  {booking.email}
+</p>
 
-              <p>
-                Status:
-                {" "}
-                <strong>
-                  {booking.status}
-                </strong>
-              </p>
+<p>
+  <strong>Phone:</strong>{" "}
+  {booking.phone}
+</p>
+
+             <p>
+  <strong>Amount:</strong> ₹
+  {booking.price?.toLocaleString()}
+</p>
+
+<p>
+  <strong>Date:</strong>{" "}
+  {new Date(
+    booking.bookingDate
+  ).toLocaleDateString()}
+</p>
+
+       <p>
+  <strong>Status:</strong>{" "}
+
+  <span
+    style={{
+      color:
+        booking.status ===
+        "Approved"
+          ? "#28a745"
+          : booking.status ===
+            "Rejected"
+          ? "#dc3545"
+          : "#a037d4",
+
+      fontWeight: "bold",
+    }}
+  >
+    {booking.status}
+  </span>
+</p>
             </div>
           </div>
         ))}
+        <button
+  onClick={() => navigate("/")}
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    width: "40px",
+    height: "50px",
+    borderRadius: "50%",
+    backgroundColor: "#000000",
+    border: "none",
+    fontSize: "24px",
+    fontWeight: "bold",
+    zIndex: "9999",
+  }}
+>
+  🏠
+</button>
       </div>
     </div>
   );

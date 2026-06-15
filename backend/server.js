@@ -8,6 +8,9 @@ const packageroute = require("./routes/packageroute");
 const bookingRoutes = require("./routes/bookingroute");
 const dashboardRoutes =
   require("./routes/dashboardroute");
+  const stayRoutes = require(
+  "./routes/stayroute"
+);
 
 dotenv.config();
 
@@ -25,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/packages", packageroute);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/stays", stayRoutes);
 // Test Route
 app.get("/", (req, res) => {
   res.send("Horizon Compass Backend Running");

@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 function PackageDetails() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const [pkg, setPkg] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     fetchPackage();
@@ -30,85 +33,153 @@ function PackageDetails() {
       </h2>
     );
   }
-  const handleBooking = async () => {
-  try {
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
-
-    if (!user) {
-      alert("Please login first");
-      return;
-    }
-
-    await axios.post(
-      "http://localhost:5000/api/bookings",
-      {
-        userId: user._id,
-        userName: user.name,
-        email: user.email,
-
-        packageId: pkg._id,
-        packageTitle: pkg.title,
-        price: pkg.price,
-      }
-    );
-
-    alert(
-      "Package booked successfully!"
-    );
-  } catch (error) {
-    console.error(error);
-  }
+const handleAddToCart = () => {
+  addToCart({
+    ...pkg,
+    type: "package",
+  });
+toast.success(
+  `${pkg.title} added to cart`
+);
+  
 };
 
-  return (
+const handleBooking = () => {
+  addToCart({
+    ...pkg,
+    type: "package",
+  });
+
+  navigate("/cart");
+};
+
+ return (
+  <div
+    style={{
+      backgroundColor: "#000",
+      color: "#fff",
+      minHeight: "100vh",
+    }}
+  >
+    <img
+      src={pkg.image}
+      alt={pkg.title}
+      style={{
+        width: "100%",
+        height: "500px",
+        objectFit: "cover",
+      }}
+    />
+
     <div className="container py-5">
-      <div className="card shadow border-0">
-        <img
-          src={pkg.image}
-          alt={pkg.title}
+
+      <h1
+        style={{
+          color: "#D4AF37",
+          fontWeight: "700",
+        }}
+      >
+        {pkg.title}
+      </h1>
+
+      <h4>{pkg.city}</h4>
+
+      <div className="mt-4 mb-4">
+
+        <span
           style={{
-            height: "500px",
-            objectFit: "cover",
+            color: "#D4AF37",
+            fontSize: "2rem",
+            fontWeight: "700",
           }}
-        />
+        >
+          ₹{pkg.price}
+        </span>
 
-        <div className="card-body p-4">
-          <h1
-            style={{
-              color: "#D4AF37",
-            }}
-          >
-            {pkg.title}
-          </h1>
+        <span className="ms-4">
+          {pkg.duration}
+        </span>
 
-          <h4>{pkg.city}</h4>
+      </div>
 
-          <p>
-            Duration: {pkg.duration}
-          </p>
+      <hr
+        style={{
+          borderColor: "#D4AF37",
+        }}
+      />
 
-          <h3>
-            ₹{pkg.price}
-          </h3>
+      <h3
+        style={{
+          color: "#D4AF37",
+        }}
+      >
+        About This Tour
+      </h3>
 
-          <p>
-            {pkg.description}
-          </p>
+      <p>{pkg.description}</p>
 
-          <button
-  className="btn"
+      <h3
+        className="mt-5"
+        style={{
+          color: "#D4AF37",
+        }}
+      >
+        What's Included
+      </h3>
+
+     <ul>
+  {pkg.includes?.map((item, index) => (
+    <li key={index}>
+      {item}
+    </li>
+  ))}
+</ul>
+
+<div className="d-flex gap-3 mt-4">
+
+  <button
+    className="btn"
+    style={{
+      backgroundColor: "#D4AF37",
+      color: "#000",
+      fontWeight: "700",
+      padding: "12px 30px",
+    }}
+    onClick={handleAddToCart}
+  >
+    Add To Cart
+  </button>
+
+  <button
+    className="btn btn-outline-warning"
+    style={{
+      padding: "10px 25px",
+      fontWeight: "600",
+    }}
+    onClick={handleBooking}
+  >
+    Book Now
+  </button>
+
+</div>
+<button
+  onClick={() => navigate("/")}
   style={{
-    backgroundColor: "#D4AF37",
-    color: "#000",
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    width: "50px",
+    height: "50px",
+    borderRadius: "50%",
+    backgroundColor: "#000000",
+    border: "none",
+    fontSize: "24px",
     fontWeight: "bold",
+    zIndex: "9999",
   }}
-  onClick={handleBooking}
 >
-  Book Now
+  🏠
 </button>
-        </div>
       </div>
     </div>
   );

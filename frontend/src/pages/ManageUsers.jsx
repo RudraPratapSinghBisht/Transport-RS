@@ -34,7 +34,7 @@ function ManageUsers() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#111827",
+        backgroundColor: "#000000",
         color: "white",
         padding: "30px",
       }}
@@ -57,9 +57,9 @@ function ManageUsers() {
             <div
               className="card p-3"
               style={{
-                backgroundColor: "#1F2937",
+                backgroundColor: "#000000",
                 color: "white",
-                border: "1px solid #374151",
+                border: "3px solid #cf2512",
               }}
             >
               <h4>{user.name}</h4>

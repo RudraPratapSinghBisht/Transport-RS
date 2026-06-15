@@ -54,9 +54,22 @@ localStorage.setItem(
 
       alert("Login Successful");
 
-     if (data.user.role === "admin") {
+if (data.user.role === "admin") {
+
+  localStorage.setItem(
+    "isAdmin",
+    "true"
+  );
+
   navigate("/admin");
+
 } else {
+
+  localStorage.setItem(
+    "isAdmin",
+    "false"
+  );
+
   window.location.href = "/";
 }
     } catch (error) {

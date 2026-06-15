@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useCart } from "../context/CartContext";
 import axios from "axios";
 import baliImg from "../assets/bali.png";
 import kyotoImg from "../assets/kyoto.png";
@@ -15,6 +16,8 @@ import historicalImg from "../assets/historical.jpg";
 import luxuryImg from "../assets/luxury.jpg";
 function Home() {
   const navigate = useNavigate();
+
+  const { cartItems } = useCart();
   const isLoggedIn =
   localStorage.getItem("token");
 
@@ -29,7 +32,58 @@ const [destination, setDestination] =
   useState([]);
   useEffect(() => {
   fetchFeaturedPackages();
+  fetchStays();
 }, []);
+const [stays, setStays] = useState([]);
+const [stayStart, setStayStart] = useState(0);
+const visibleStays = stays.slice(
+  stayStart,
+  stayStart + 3
+);
+const [packageStart, setPackageStart] =
+  useState(0);
+const visiblePackages = [
+  featuredPackages[packageStart % featuredPackages.length],
+  featuredPackages[(packageStart + 1) % featuredPackages.length],
+  featuredPackages[(packageStart + 2) % featuredPackages.length],
+].filter(Boolean);
+console.log("Packages:", featuredPackages);
+console.log("Count:", featuredPackages.length);
+console.log("Start:", packageStart);
+const nextStay = () => {
+  if (stayStart >= stays.length - 3) {
+    setStayStart(0);
+  } else {
+    setStayStart(stayStart + 1);
+  }
+};
+const prevStay = () => {
+  if (stayStart === 0) {
+    setStayStart(stays.length - 3);
+  } else {
+    setStayStart(stayStart - 1);
+  }
+};
+const nextPackage = () => {
+  if (
+    packageStart >=
+    featuredPackages.length - 3
+  ) {
+    setPackageStart(0);
+  } else {
+    setPackageStart(packageStart + 1);
+  }
+};
+
+const prevPackage = () => {
+  if (packageStart === 0) {
+    setPackageStart(
+      featuredPackages.length - 3
+    );
+  } else {
+    setPackageStart(packageStart - 1);
+  }
+};
 
 const fetchFeaturedPackages = async () => {
   try {
@@ -38,8 +92,19 @@ const fetchFeaturedPackages = async () => {
     );
 
     setFeaturedPackages(
-      res.data.slice(0, 3)
+      res.data
     );
+  } catch (error) {
+    console.error(error);
+  }
+};
+const fetchStays = async () => {
+  try {
+    const res = await axios.get(
+      "http://localhost:5000/api/stays"
+    );
+
+    setStays(res.data);
   } catch (error) {
     console.error(error);
   }
@@ -47,13 +112,18 @@ const fetchFeaturedPackages = async () => {
   return (
     <>
       {/* Navbar */}
-      <nav
-        className="navbar navbar-expand-lg navbar-dark"
-        style={{
-          backgroundColor: "#111",
-          padding: "12px 0",
-        }}
-      >
+    <nav
+  className="navbar navbar-expand-lg navbar-dark"
+  style={{
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    zIndex: "1000",
+    background: "transparent",
+    padding: "20px 0",
+  }}
+>
         <div className="container">
          <a
   className="navbar-brand fw-bold d-flex align-items-center"
@@ -68,13 +138,13 @@ const fetchFeaturedPackages = async () => {
     src={compassLogo}
     alt="Compass"
     style={{
-      width: "30px",
-      height: "30px",
+      width: "115px",
+      height: "70px",
       objectFit: "contain",
     }}
   />
 
-  <span>Horizon Compass</span>
+  <span>𝐇𝐨𝐫𝐢𝐳𝐨𝐧 𝐂𝐨𝐦𝐩𝐚𝐬𝐬</span>
 </a>
 
           <div className="d-flex gap-4">
@@ -106,6 +176,13 @@ const fetchFeaturedPackages = async () => {
   >
     Blog
   </Link>
+  
+  <Link
+  to="/cart"
+  className="text-white text-decoration-none"
+>
+  Cart ({cartItems.length})
+</Link>
 
 </div>
 
@@ -138,8 +215,14 @@ const fetchFeaturedPackages = async () => {
       fontWeight: "600",
     }}
     onClick={() => {
-      localStorage.clear();
-      window.location.reload();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+      localStorage.removeItem("name");
+      localStorage.removeItem("email");
+      localStorage.removeItem("isAdmin");
+
+      window.location.href = "/";
     }}
   >
     Logout
@@ -177,9 +260,10 @@ const fetchFeaturedPackages = async () => {
 <section
   style={{
     width: "100%",
-    height: "90vh",
+    height: "105vh",
     position: "relative",
     overflow: "hidden",
+    marginTop: "0",
   }}
 >
   <video
@@ -261,9 +345,11 @@ const fetchFeaturedPackages = async () => {
       {/* Search Bar */}
 <section
   style={{
-    marginTop: "-40px",
+    marginTop: "-35px",
     position: "relative",
     zIndex: "10",
+    backgroundColor: "#000",
+    paddingBottom: "20px",
   }}
 >
   <div className="container">
@@ -346,12 +432,320 @@ const fetchFeaturedPackages = async () => {
     </div>
   </div>
 </section>
+{/* Featured Tour Packages */}
+<section
+  className="container-fluid pt-3 pb-5"
+  style={{
+    backgroundColor: "#000",
+  }}
+>
+<div
+  style={{
+    position: "relative",
+    marginBottom: "40px",
+    textAlign: "center",
+  }}
+>
+  <span
+    style={{
+      backgroundColor: "#D4AF37",
+      color: "#ffffff",
+      padding: "12px 30px",
+      borderRadius: "12px",
+      fontSize: "2rem",
+      fontWeight: "700",
+      display: "inline-block",
+      boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
+    }}
+  >
+    Featured Tour Packages
+  </span>
 
-      {/* Popular Destinations */}
-  <section className="container py-5">
-  <h2 className="text-center mb-5">
-    Popular Destinations
+  <div
+    style={{
+      position: "absolute",
+      right: "0",
+      top: "50%",
+      transform: "translateY(-50%)",
+      display: "flex",
+      gap: "10px",
+    }}
+  >
+    <button
+      className="btn"
+      onClick={prevPackage}
+      style={{
+        backgroundColor: "#000",
+        color: "#fff",
+        border: "none",
+        fontSize: "40px",
+      }}
+    >
+      ❮
+    </button>
+
+    <button
+      className="btn"
+      onClick={nextPackage}
+      style={{
+        backgroundColor: "#000",
+        color: "#fff",
+        border: "none",
+        fontSize: "40px",
+      }}
+    >
+      ❯
+    </button>
+  </div>
+</div>
+
+  <div className="row g-4">
+{visiblePackages.map((pkg) => (
+  <div
+    className="col-md-4 mb-4"
+    key={pkg._id}
+  >
+   <div
+  className="card shadow h-100 premium-card"
+  style={{
+    backgroundColor: "#000000",
+    color: "white",
+    border: "1px solid #D4AF37",
+  }}
+>
+
+      <img
+        src={pkg.image}
+        alt={pkg.title}
+        className="card-img-top"
+        style={{
+          height: "300px",
+          objectFit: "cover",
+        }}
+      />
+
+     <div
+  className="card-body"
+  style={{
+    backgroundColor: "#000000",
+    color: "white",
+  }}
+>
+        <h4>{pkg.title}</h4>
+
+        <p>{pkg.duration}</p>
+
+        <h4
+          style={{
+            color: "#D4AF37",
+          }}
+        >
+          ₹{pkg.price}
+        </h4>
+
+        <p>
+          {pkg.description}
+        </p>
+
+        <button
+          className="btn w-100"
+          style={{
+            backgroundColor: "#D4AF37",
+            color: "#000",
+            fontWeight: "600",
+          }}
+          onClick={() =>
+            navigate(
+              `/packages/${pkg._id}`
+            )
+          }
+        >
+          Book Now
+        </button>
+      </div>
+    </div>
+  </div>
+))}
+  </div>
+</section>
+
+<section
+  className="container-fluid pt-3 pb-5"
+  style={{
+    background:
+      "linear-gradient(to right, #000, #000000)",
+  }}
+>
+  <div className="px-3">
+
+<div
+  style={{
+    position: "relative",
+    marginBottom: "30px",
+    textAlign: "center",
+  }}
+>
+
+  <h2
+    className="text-center fw-bold"
+    style={{
+      backgroundColor: "#d4a822",
+      color: "#ffffff",
+      margin: 2,
+      padding: "12px 30px",
+      borderRadius: "12px",
+      fontSize: "2rem",
+      display: "inline-block",
+      boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
+    }}
+  >
+    Choose Your Stay
   </h2>
+
+  <div
+    style={{
+      position: "absolute",
+      right: "0",
+      top: "50%",
+      transform: "translateY(-50%)",
+      display: "flex",
+      gap: "10px",
+    }}
+  >
+
+    <button
+      className="btn"
+      onClick={prevStay}
+      style={{
+        backgroundColor: "#000",
+        color: "#fff",
+        border: "none",
+        fontSize: "40px",
+        transition: "0.3s"
+      }}
+    >
+      ❮
+    </button>
+
+    <button
+      className="btn"
+      onClick={nextStay}
+      style={{
+        backgroundColor: "#000",
+        color: "#fff",
+        border: "none",
+        fontSize: "40px",
+        transition: "0.3s"
+      }}
+    >
+      ❯
+    </button>
+
+  </div>
+
+</div>
+
+    <div className="row g-4">
+
+      {visibleStays.map((stay) => (
+        <div
+          className="col-md-4"
+          key={stay._id}
+        >
+          <div
+            className="card shadow stay-card"
+            style={{
+              backgroundColor: "#000000",
+              color: "white",
+              border:
+                "2px solid #c8b613",
+                boxShadow: "0 0 10px rgba(212,175,55,0.3)",
+            }}
+          >
+            <img
+              src={stay.image}
+              alt={stay.title}
+              className="card-img-top"
+              style={{
+                height: "230px",
+                objectFit: "cover",
+              }}
+            />
+
+            <div className="card-body">
+
+              <h3>{stay.title}</h3>
+
+              <p
+                style={{
+                  color: "#D4AF37",
+                  fontWeight: "600",
+                }}
+              >
+                {stay.category}
+              </p>
+
+              <p>
+                {stay.location}
+              </p>
+
+              <h5>
+                ₹{stay.price}/night
+              </h5>
+
+              <button
+                className="btn mt-2"
+                style={{
+                  backgroundColor:
+                    "#D4AF37",
+                  color: "#000",
+                  fontWeight: "600",
+                }}
+                onClick={() =>
+                  navigate(
+                    `/stays/${stay._id}`
+                  )
+                }
+              >
+                Explore
+              </button>
+
+            </div>
+          </div>
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+</section>
+     {/* Popular Destinations */}
+ <section
+  className="py-5"
+  style={{
+    backgroundColor: "#000",
+    position: "relative",
+    textAlign: "center",
+  }}
+>
+  <div className="container"></div>
+  <h2
+  className="text-center mb-5 fw-bold"
+  style={{
+      backgroundColor: "#D4AF37",
+      margin: 2,
+      color: "#ffffff",
+      padding: "10px 25px",
+      borderRadius: "12px",
+      fontSize: "2rem",
+      fontWeight: "700",
+      display: "inline-block",
+      boxShadow: "0 4px 15px rgba(212,175,55,0.3)",
+  }}
+>
+  Trending Destinations
+</h2>
+
 
   <div className="row">
 
@@ -366,6 +760,9 @@ const fetchFeaturedPackages = async () => {
               ? "scale(1.03)"
               : "scale(1)",
           transition: "0.3s ease",
+            backgroundColor: "#000000",
+    color: "white",
+    border: "1px solid #D4AF37"
         }}
         onMouseEnter={() =>
           setHoveredCard("turkey")
@@ -408,6 +805,9 @@ const fetchFeaturedPackages = async () => {
               ? "scale(1.03)"
               : "scale(1)",
           transition: "0.3s ease",
+            backgroundColor: "#000000",
+    color: "white",
+    border: "1px solid #D4AF37"
         }}
         onMouseEnter={() =>
           setHoveredCard("japan")
@@ -416,7 +816,7 @@ const fetchFeaturedPackages = async () => {
           setHoveredCard(null)
         }
         onClick={() =>
-          navigate("/packages?city=Tokyo")
+          navigate("/packages?city=Japan")
         }
       >
         <img
@@ -450,6 +850,9 @@ const fetchFeaturedPackages = async () => {
               ? "scale(1.03)"
               : "scale(1)",
           transition: "0.3s ease",
+            backgroundColor: "#000000",
+    color: "white",
+    border: "1px solid #D4AF37"
         }}
         onMouseEnter={() =>
           setHoveredCard("switzerland")
@@ -458,7 +861,7 @@ const fetchFeaturedPackages = async () => {
           setHoveredCard(null)
         }
         onClick={() =>
-          navigate("/packages?city=Zurich")
+          navigate("/packages?city=Switzerland")
         }
       >
         <img
@@ -484,80 +887,19 @@ const fetchFeaturedPackages = async () => {
   </div>
 </section>
 
-{/* Featured Tour Packages */}
-<section className="container py-5">
-  <h2
-    className="text-center fw-bold mb-5"
-    style={{
-      color: "#111",
-    }}
-  >
-    Featured Tour Packages
-  </h2>
-
-  <div className="row g-4">
-{featuredPackages.map((pkg) => (
-  <div
-    className="col-md-4 mb-4"
-    key={pkg._id}
-  >
-    <div className="card shadow h-100">
-
-      <img
-        src={pkg.image}
-        alt={pkg.title}
-        className="card-img-top"
-        style={{
-          height: "300px",
-          objectFit: "cover",
-        }}
-      />
-
-      <div className="card-body">
-        <h4>{pkg.title}</h4>
-
-        <p>{pkg.duration}</p>
-
-        <h4
-          style={{
-            color: "#D4AF37",
-          }}
-        >
-          ₹{pkg.price}
-        </h4>
-
-        <p>
-          {pkg.description}
-        </p>
-
-        <button
-          className="btn w-100"
-          style={{
-            backgroundColor: "#D4AF37",
-            color: "#000",
-            fontWeight: "600",
-          }}
-          onClick={() =>
-            navigate(
-              `/packages/${pkg._id}`
-            )
-          }
-        >
-          Book Now
-        </button>
-      </div>
-    </div>
-  </div>
-))}
-  </div>
-</section>
 {/* Testimonials */}
-<section className="container py-5">
+<section
+  className="pt-1 pb-5"
+  style={{
+    backgroundColor: "#000",
+  }}
+>
+  <div className="container"></div>
 
   <h2
     className="text-center fw-bold mb-5"
     style={{
-      color: "#111",
+      color: "#D4AF37",
     }}
   >
     What Our Travelers Say
@@ -568,10 +910,13 @@ const fetchFeaturedPackages = async () => {
     {/* Review 1 */}
     <div className="col-md-4">
       <div
-        className="card border-0 shadow-sm h-100"
-        style={{
-          padding: "25px",
-        }}
+  className="card h-100 premium-card"
+style={{
+  backgroundColor: "#000000",
+  color: "white",
+  padding: "25px",
+  border: "1px solid #D4AF37",
+}}
       >
         <h4>★★★★★</h4>
 
@@ -588,10 +933,13 @@ const fetchFeaturedPackages = async () => {
     {/* Review 2 */}
     <div className="col-md-4">
       <div
-        className="card border-0 shadow-sm h-100"
-        style={{
-          padding: "25px",
-        }}
+  className="card h-100 premium-card"
+style={{
+  backgroundColor: "#000000",
+  color: "white",
+  padding: "25px",
+  border: "1px solid #D4AF37",
+}}
       >
         <h4>★★★★★</h4>
 
@@ -608,10 +956,13 @@ const fetchFeaturedPackages = async () => {
     {/* Review 3 */}
     <div className="col-md-4">
       <div
-        className="card border-0 shadow-sm h-100"
-        style={{
-          padding: "25px",
-        }}
+      className="card h-100"
+style={{
+  backgroundColor: "#000000",
+  color: "white",
+  padding: "25px",
+  border: "1px solid #D4AF37",
+}}
       >
         <h4>★★★★★</h4>
 
@@ -634,8 +985,8 @@ const fetchFeaturedPackages = async () => {
   style={{
     backgroundColor: "#000",
     color: "#fff",
-    padding: "25px 0",
-    marginTop: "30px",
+    padding: "5px 0",
+    marginTop: "0px",
   }}
 >
   <div className="container">
@@ -671,7 +1022,7 @@ const fetchFeaturedPackages = async () => {
 
     </div>
 
-    <hr style={{ borderColor: "#444" }} />
+    <hr style={{ borderColor: "#d2a211" }} />
 
     <p
       className="text-center"

@@ -35,26 +35,37 @@ const fetchPackages = async () => {
   const [packages, setPackages] = useState([]);
   let filteredPackages = [...packages];
   if (searchedCity) {
+    const search = searchedCity.toLowerCase();
+    filteredPackages = filteredPackages.filter((pkg) =>
+      pkg.title?.toLowerCase().includes(search) ||
+      pkg.city?.toLowerCase().includes(search) ||
+      pkg.country?.toLowerCase().includes(search) ||
+      pkg.description?.toLowerCase().includes(search)
+    );
+  }
+if (filterCity !== "") {
+  const search =
+    filterCity.toLowerCase();
+
   filteredPackages =
     filteredPackages.filter(
       (pkg) =>
-        pkg.city
-          ?.toLowerCase()
-          .includes(
-            searchedCity.toLowerCase()
-          ) ||
         pkg.title
           ?.toLowerCase()
-          .includes(
-            searchedCity.toLowerCase()
-          )
-    );
-}
+          .includes(search) ||
 
-if (filterCity !== "") {
-  filteredPackages = filteredPackages.filter((pkg) =>
-    pkg.city.toLowerCase().includes(filterCity.toLowerCase())
-  );
+        pkg.city
+          ?.toLowerCase()
+          .includes(search) ||
+
+        pkg.country
+          ?.toLowerCase()
+          .includes(search) ||
+
+        pkg.description
+          ?.toLowerCase()
+          .includes(search)
+    );
 }
 
 if (sortOption === "low-high") {
@@ -81,19 +92,27 @@ if (sortOption === "a-z") {
     <div
   className="container-fluid px-4 py-5"
   style={{
-    backgroundColor: "#111827",
+    backgroundColor: "#000000",
     minHeight: "100vh",
     color: "white",
   }}
 >
-     <h1
-  className="text-center mb-5 fw-bold"
-  style={{
-    color: "#D4AF37",
-  }}
->
-  Tour Packages
-</h1>
+<div className="text-center mb-5">
+  <span
+    style={{
+      backgroundColor: "#D4AF37",
+      color: "#000",
+      padding: "12px 20px",
+      borderRadius: "10px",
+      fontSize: "2rem",
+      fontWeight: "700",
+      display: "inline-block",
+      boxShadow: "0 3px 12px rgb(212, 169, 27)",
+    }}
+  >
+    Travel Packages
+  </span>
+</div>
 <div className="row mb-4">
 
   <div className="col-md-6">
@@ -101,9 +120,9 @@ if (sortOption === "a-z") {
   type="text"
   className="form-control"
   style={{
-    backgroundColor: "#1F2937",
+    backgroundColor: "#000000",
     color: "white",
-    border: "1px solid #374151",
+    border: "1px solid #d6a210",
   }}
       placeholder="Search destination..."
       value={filterCity}
@@ -115,9 +134,9 @@ if (sortOption === "a-z") {
    <select
   className="form-select"
   style={{
-    backgroundColor: "#1F2937",
+    backgroundColor: "#000000",
     color: "white",
-    border: "1px solid #374151",
+    border: "1px solid #d7a20f",
   }}
       value={sortOption}
       onChange={(e) => setSortOption(e.target.value)}
@@ -140,11 +159,11 @@ if (sortOption === "a-z") {
         {filteredPackages.map((pkg, index) => (
           <div className="col-md-2" key={pkg._id}>
            <div
-  className="card shadow-sm h-100"
+  className="card shadow premium-card h-100"
   style={{
-    backgroundColor: "#1F2937",
+    backgroundColor: "#000000",
     color: "white",
-    border: "1px solid #374151",
+    border: "2px solid #faae22",
   }}
 >
               <img
@@ -196,6 +215,24 @@ if (sortOption === "a-z") {
             </div>
           </div>
         ))}
+        <button
+  onClick={() => navigate("/")}
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    width: "40px",
+    height: "50px",
+    borderRadius: "50%",
+    backgroundColor: "#00000000",
+    border: "none",
+    fontSize: "24px",
+    fontWeight: "bold",
+    zIndex: "9999",
+  }}
+>
+  🏠
+</button>
       </div>
     </div>
   );
