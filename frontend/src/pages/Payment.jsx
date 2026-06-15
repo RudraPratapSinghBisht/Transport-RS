@@ -1,17 +1,125 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Payment() {
   const [paymentMethod, setPaymentMethod] =
     useState("UPI");
 
   const { cartItems } = useCart();
-
+  const navigate = useNavigate();
   const total = cartItems.reduce(
     (sum, item) => sum + item.price,
     0
   );
+const handlePayment = async () => {
+  try {
+    const API_URL =
+      "https://horizon-compass.onrender.com";
 
+    const orderRes =
+      await axios.post(
+        `${API_URL}/api/payment/create-order`,
+        {
+          amount: total,
+        }
+      );
+
+    const order = orderRes.data;
+
+    const options = {
+      key: "Q6EFHmn2h5I92AwP1ew8Yfxy",
+
+      amount: order.amount,
+
+      currency: order.currency,
+
+      name: "Horizon Compass",
+
+      description:
+        "Travel Package Booking",
+
+      order_id: order.id,
+
+      handler: async (
+        response
+      ) => {
+        try {
+          const firstItem =
+            cartItems[0];
+
+          await axios.post(
+            `${API_URL}/api/bookings`,
+            {
+              packageId:
+                firstItem?._id ||
+                "cart",
+
+              packageTitle:
+                cartItems
+                  .map(
+                    (
+                      item
+                    ) =>
+                      item.title
+                  )
+                  .join(", "),
+
+              price: total,
+
+              userName:
+                localStorage.getItem(
+                  "name"
+                ),
+
+              email:
+                localStorage.getItem(
+                  "email"
+                ),
+
+              paymentId:
+                response.razorpay_payment_id,
+
+              paymentStatus:
+                "Paid",
+            }
+          );
+
+          alert(
+            "Payment Successful!"
+          );
+
+          navigate(
+            "/my-bookings"
+          );
+        } catch (error) {
+          console.error(
+            error
+          );
+        }
+      },
+
+      theme: {
+        color:
+          "#D4AF37",
+      },
+    };
+
+    const razorpay =
+      new window.Razorpay(
+        options
+      );
+
+    razorpay.open();
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      "Payment Failed"
+    );
+  }
+};
   return (
     <div
       style={{
@@ -301,17 +409,18 @@ function Payment() {
                 ₹{total.toLocaleString()}
               </h1>
 
-              <button
-                className="btn w-100 mt-4"
-                style={{
-                  backgroundColor:
-                    "#D4AF37",
-                  color: "#000",
-                  fontWeight: "700",
-                }}
-              >
-                Pay Now
-              </button>
+          <button
+  className="btn w-100 mt-4"
+  style={{
+    backgroundColor:
+      "#D4AF37",
+    color: "#000",
+    fontWeight: "700",
+  }}
+  onClick={handlePayment}
+>
+  Pay Now
+</button>
 
             </div>
 
