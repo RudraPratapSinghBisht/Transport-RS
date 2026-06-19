@@ -1,139 +1,209 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function MyBookings() {
-  const [bookings, setBookings] = useState([]);
+const [bookings, setBookings] = useState([]);
+const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
+const navigate = useNavigate();
 
-  const fetchBookings = async () => {
-    try {
-      const email =
-        localStorage.getItem("email");
+useEffect(() => {
+fetchBookings();
+}, []);
 
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/bookings/user/${email}`
-      );
+const fetchBookings = async () => {
+try {
+const email =
+localStorage.getItem("email");
 
-      setBookings(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#000000",
-        color: "white",
-        padding: "30px",
-      }}
-    >
-      <h1
+  if (!email) {
+    setLoading(false);
+    return;
+  }
+
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/api/bookings/user/${email}`
+  );
+
+  setBookings(res.data);
+} catch (error) {
+  console.error(error);
+} finally {
+  setLoading(false);
+}
+
+
+};
+
+return (
+<div
+style={{
+minHeight: "100vh",
+backgroundColor: "#000",
+color: "white",
+padding: "30px",
+}}
+>
+<h1
+style={{
+color: "#D4AF37",
+fontWeight: "700",
+}}
+>
+My Bookings </h1>
+
+  {loading ? (
+    <h3 className="mt-5">
+      Loading Bookings...
+    </h3>
+  ) : bookings.length === 0 ? (
+    <div className="text-center mt-5">
+      <h3>No Bookings Found</h3>
+
+      <button
+        className="btn mt-3"
         style={{
-          color: "#D4AF37",
-          fontWeight: "bold",
+          backgroundColor: "#D4AF37",
+          color: "#000",
+          fontWeight: "700",
         }}
+        onClick={() => navigate("/")}
       >
-        My Bookings
-      </h1>
-
-      <div className="row mt-4">
-        {bookings.map((booking) => (
+        Browse Vehicles
+      </button>
+    </div>
+  ) : (
+    <div className="row mt-4">
+      {bookings.map((booking) => (
+        <div
+          key={booking._id}
+          className="col-md-4 mb-4"
+        >
           <div
-            key={booking._id}
-            className="col-md-4 mb-4"
+            className="card p-3 h-100"
+            style={{
+              backgroundColor: "#000",
+              border:
+                "2px solid #D4AF37",
+              color: "white",
+              borderRadius: "15px",
+            }}
           >
-            <div
-              className="card p-3"
+            <h4
               style={{
-                backgroundColor: "#000000",
-                border: "3px solid #121bcf",
-                color: "white",
+                color: "#D4AF37",
+                fontWeight: "700",
               }}
             >
-              <h4
-  style={{
-    color: "#D4AF37",
-    fontWeight: "700",
-  }}
->
-  {booking.packageTitle}
-</h4>
+              {booking.packageTitle}
+            </h4>
+
+            <hr
+              style={{
+                borderColor:
+                  "#D4AF37",
+              }}
+            />
+
+            <p>
+              <strong>
+                Booked By:
+              </strong>{" "}
+              {booking.userName}
+            </p>
+
+            <p>
+              <strong>
+                Email:
+              </strong>{" "}
+              {booking.email}
+            </p>
+
+            <p>
+              <strong>
+                Phone:
+              </strong>{" "}
+              {booking.phone}
+            </p>
+
+            <p>
+              <strong>
+                Amount:
+              </strong>{" "}
+              ₹
+              {booking.price?.toLocaleString()}
+            </p>
 <p>
-  <strong>Booked By:</strong>{" "}
-  {booking.userName}
+  <strong>Booking ID:</strong>{" "}
+  {booking.bookingId}
 </p>
 
 <p>
-  <strong>Email:</strong>{" "}
-  {booking.email}
+  <strong>Payment Method:</strong>{" "}
+  {booking.paymentMethod}
 </p>
+            <p>
+              <strong>
+                Date:
+              </strong>{" "}
+              {booking.bookingDate
+                ? new Date(
+                    booking.bookingDate
+                  ).toLocaleDateString()
+                : "N/A"}
+            </p>
 
-<p>
-  <strong>Phone:</strong>{" "}
-  {booking.phone}
-</p>
+            <p>
+              <strong>
+                Status:
+              </strong>{" "}
+              <span
+                style={{
+                  color:
+                    booking.status ===
+                    "Approved"
+                      ? "#28a745"
+                      : booking.status ===
+                        "Rejected"
+                      ? "#dc3545"
+                      : "#D4AF37",
+                  fontWeight:
+                    "700",
+                }}
+              >
+                {booking.status ||
+                  "Pending"}
+              </span>
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
 
-             <p>
-  <strong>Amount:</strong> ₹
-  {booking.price?.toLocaleString()}
-</p>
-
-<p>
-  <strong>Date:</strong>{" "}
-  {new Date(
-    booking.bookingDate
-  ).toLocaleDateString()}
-</p>
-
-       <p>
-  <strong>Status:</strong>{" "}
-
-  <span
+  <button
+    onClick={() => navigate("/")}
     style={{
-      color:
-        booking.status ===
-        "Approved"
-          ? "#28a745"
-          : booking.status ===
-            "Rejected"
-          ? "#dc3545"
-          : "#a037d4",
-
-      fontWeight: "bold",
+      position: "fixed",
+      bottom: "20px",
+      right: "20px",
+      width: "55px",
+      height: "55px",
+      borderRadius: "50%",
+      backgroundColor: "#000",
+      border:
+        "2px solid #D4AF37",
+      fontSize: "24px",
+      zIndex: "9999",
     }}
   >
-    {booking.status}
-  </span>
-</p>
-            </div>
-          </div>
-        ))}
-        <button
-  onClick={() => navigate("/")}
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    width: "40px",
-    height: "50px",
-    borderRadius: "50%",
-    backgroundColor: "#000000",
-    border: "none",
-    fontSize: "24px",
-    fontWeight: "bold",
-    zIndex: "9999",
-  }}
->
-  🏠
-</button>
-      </div>
-    </div>
-  );
+    🏠
+  </button>
+</div>
+
+);
 }
 
 export default MyBookings;

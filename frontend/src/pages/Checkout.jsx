@@ -23,9 +23,11 @@ const [formData, setFormData] = useState({
 });
 
   const total = cartItems.reduce(
-    (sum, item) => sum + item.price,
-    0
-  );
+  (sum, item) =>
+    sum +
+    Number(item.pricePerDay || 0),
+  0
+);
 const handlePayment = async () => {
   try {
 
@@ -38,7 +40,7 @@ const handlePayment = async () => {
 
   packageTitle:
     cartItems.map(
-      (item) => item.title
+      (item) => item.name
     ).join(", "),
 
   price: total,
@@ -247,13 +249,23 @@ navigate(
                     key={index}
                     className="mb-3"
                   >
-                    <strong>
-                      {item.title}
-                    </strong>
+                   <strong>
+  {item.name}
+</strong>
 
-                    <br />
+<br />
 
-                    ₹{item.price}
+₹{item.pricePerDay}/day
+
+<br />
+
+<span
+  style={{
+    color: "#D4AF37",
+  }}
+>
+  {item.brand}
+</span>
                   </div>
                 )
               )}

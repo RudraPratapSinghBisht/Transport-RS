@@ -10,9 +10,11 @@ function Cart() {
     const navigate = useNavigate();
 
   const total = cartItems.reduce(
-    (sum, item) => sum + item.price,
-    0
-  );
+  (sum, item) =>
+    sum +
+    Number(item.pricePerDay || 0),
+  0
+);
 
   return (
     <div
@@ -64,7 +66,7 @@ function Cart() {
                   <div className="col-md-3">
                     <img
                       src={item.image}
-                      alt={item.title}
+                      alt={item.name}
                       style={{
                         width: "100%",
                         height: "200px",
@@ -76,26 +78,37 @@ function Cart() {
                   <div className="col-md-9">
                     <div className="card-body">
 
-                      <h3>{item.title}</h3>
+                      <h3>{item.name}</h3>
 
                       <h4
                         style={{
                           color: "#D4AF37",
                         }}
                       >
-                        ₹{item.price}
+                        ₹{item.pricePerDay}
                       </h4>
 
-                      <p>
-                        Type: {item.type}
-                      </p>
+                     <p>
+  <strong>Brand:</strong>{" "}
+  {item.brand}
+</p>
+
+<p>
+  <strong>City:</strong>{" "}
+  {item.city}
+</p>
+
+<p>
+  <strong>Vehicle Type:</strong>{" "}
+  {item.type}
+</p>
 
                       <button
                         className="btn btn-danger"
                         onClick={() => {
                           removeFromCart(item._id);
                           toast.error(
-                            `${item.title} removed from cart`
+                            `${item.name} removed from cart`
                           );
                         }}
                       >

@@ -27,37 +27,72 @@ const BookingSchema = new mongoose.Schema(
       required: true,
     },
 
-paymentId: {
-  type: String,
-},
+    bookingId: {
+      type: String,
+      default: "",
+    },
 
-paymentStatus: {
-  type: String,
-  default: "Pending",
-},
+    paymentMethod: {
+      type: String,
+      default: "",
+    },
 
-phone: String,
+    paymentId: {
+      type: String,
+      default: "",
+    },
 
-age: Number,
+    paymentStatus: {
+      type: String,
+      default: "Pending",
+    },
 
-gender: String,
+    phone: {
+      type: String,
+      default: "",
+    },
 
-nationality: String,
+    age: {
+      type: Number,
+      default: null,
+    },
 
-state: String,
+    gender: {
+      type: String,
+      default: "",
+    },
+
+    nationality: {
+      type: String,
+      default: "",
+    },
+
+    state: {
+      type: String,
+      default: "",
+    },
 
     status: {
       type: String,
       default: "Pending",
+      enum: [
+        "Pending",
+        "Approved",
+        "Rejected",
+      ],
     },
 
     bookingDate: {
       type: Date,
       default: Date.now,
     },
-  },{
+  },
+  {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Booking", BookingSchema);
+module.exports = mongoose.model(
+  "Booking",
+  BookingSchema
+);

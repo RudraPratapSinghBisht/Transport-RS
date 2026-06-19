@@ -2,18 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
+// Load environment variables
+dotenv.config();
+
+console.log("MONGO_URI =", process.env.MONGO_URI);
+
 const connectDB = require("./config/db");
+
 const authRoutes = require("./routes/auth");
 const packageroute = require("./routes/packageroute");
 const bookingRoutes = require("./routes/bookingroute");
-const dashboardRoutes =
-  require("./routes/dashboardroute");
-  const stayRoutes = require(
-  "./routes/stayroute"
-);
-const paymentRoutes =
-  require("./routes/paymentroute");
-dotenv.config();
+const dashboardRoutes = require("./routes/dashboardroute");
+const stayRoutes = require("./routes/stayroute");
 
 // Connect MongoDB
 connectDB();
@@ -30,10 +30,10 @@ app.use("/api/packages", packageroute);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/stays", stayRoutes);
-app.use("/api/payment", paymentRoutes);
+
 // Test Route
 app.get("/", (req, res) => {
-  res.send("Horizon Compass Backend Running");
+  res.send("JourneyMate Backend Running");
 });
 
 const PORT = process.env.PORT || 5000;

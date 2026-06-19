@@ -19,18 +19,20 @@ function ManageUsers() {
       console.error(error);
     }
   };
-  const makeAdmin = async (id) => {
-  try {
-    await axios.put(
-      `${import.meta.env.VITE_API_URL}/api/auth/make-admin/${id}`
-    );
 
-    fetchUsers();
-  } catch (error) {
-    console.error(error);
-  }
-};
-    return (
+  const makeAdmin = async (id) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/auth/make-admin/${id}`
+      );
+
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
     <div
       style={{
         minHeight: "100vh",
@@ -43,26 +45,47 @@ function ManageUsers() {
         style={{
           color: "#D4AF37",
           fontWeight: "bold",
+          marginBottom: "30px",
         }}
       >
         Manage Users
       </h1>
 
-      <div className="row mt-4">
+      <div className="row">
         {users.map((user) => (
           <div
             key={user._id}
-            className="col-md-4 mb-4"
+            className="col-lg-4 col-md-6 mb-4"
           >
             <div
-              className="card p-3"
+              className="card p-4 h-100"
               style={{
                 backgroundColor: "#000000",
                 color: "white",
-                border: "3px solid #cf2512",
+                border:
+                  user.role === "admin"
+                    ? "3px solid #dc3545"
+                    : "3px solid #D4AF37",
+                borderRadius: "12px",
               }}
             >
-              <h4>{user.name}</h4>
+              <h3
+                style={{
+                  color:
+                    user.role === "admin"
+                      ? "#ff4d4d"
+                      : "#ffffff",
+                  fontWeight: "bold",
+                }}
+              >
+                {user.name}
+              </h3>
+
+              <hr
+                style={{
+                  borderColor: "#444",
+                }}
+              />
 
               <p>
                 <strong>Email:</strong>{" "}
@@ -70,24 +93,50 @@ function ManageUsers() {
               </p>
 
               <p>
-                <strong>Role:</strong>{" "}
-                {user.role}
-                {user.role !== "admin" && (
-  <button
-    className="btn mt-2"
-    style={{
-      backgroundColor: "#D4AF37",
-      color: "#000",
-      fontWeight: "bold",
-    }}
-    onClick={() =>
-      makeAdmin(user._id)
-    }
-  >
-    Make Admin
-  </button>
-)}
+                <strong>City:</strong>{" "}
+                {user.city || "Not Added"}
               </p>
+
+              <p>
+                <strong>Age:</strong>{" "}
+                {user.age || "Not Added"}
+              </p>
+
+              <p>
+                <strong>Gender:</strong>{" "}
+                {user.gender || "Not Added"}
+              </p>
+
+              <p>
+                <strong>Role:</strong>{" "}
+                <span
+                  style={{
+                    color:
+                      user.role === "admin"
+                        ? "#ff4d4d"
+                        : "#D4AF37",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {user.role}
+                </span>
+              </p>
+
+              {user.role !== "admin" && (
+                <button
+                  className="btn mt-2"
+                  style={{
+                    backgroundColor: "#D4AF37",
+                    color: "#000",
+                    fontWeight: "bold",
+                  }}
+                  onClick={() =>
+                    makeAdmin(user._id)
+                  }
+                >
+                  Make Admin
+                </button>
+              )}
             </div>
           </div>
         ))}

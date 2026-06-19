@@ -64,7 +64,7 @@ function AdminDashboard() {
             marginBottom: "40px",
           }}
         >
-          Horizon Compass
+          JourneyMate Admin
         </h2>
 
         <div className="d-flex flex-column gap-3">
@@ -90,22 +90,9 @@ function AdminDashboard() {
               navigate("/admin/packages")
             }
           >
-            Packages
+            Vehicles
           </button>
-
-        <button
-  className="btn text-start"
-  style={{
-    backgroundColor: "#113d79",
-    color: "white",
-    border: "none",
-  }}
-  onClick={() =>
-    navigate("/admin/stays")
-  }
->
-  Stays
-</button>
+           
 
          <button
   className="btn text-start"
@@ -132,7 +119,7 @@ function AdminDashboard() {
               navigate("/admin/bookings")
             }
           >
-            Bookings
+            Rentals
           </button>
 
           <button
@@ -223,7 +210,7 @@ function AdminDashboard() {
                 border: "4px solid #c99f15",
               }}
             >
-              <h5>Total Packages</h5>
+              <h5>Total Vehicles</h5>
 
               <h2
                 style={{
@@ -274,7 +261,7 @@ function AdminDashboard() {
           </h3>
 
           <p className="mb-0">
-            Manage packages, stays, bookings, and users from
+            Manage cars, bikes, rentals, and users from
             this dashboard.
           </p>
         </div>

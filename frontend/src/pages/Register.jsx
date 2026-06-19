@@ -8,10 +8,14 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [city, setCity] = useState("");
+
   const handleRegister = async () => {
     try {
       const response = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
         {
           method: "POST",
           headers: {
@@ -21,6 +25,9 @@ function Register() {
             name,
             email,
             password,
+            age,
+            gender,
+            city,
           }),
         }
       );
@@ -49,12 +56,13 @@ function Register() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        padding: "20px",
       }}
     >
       <div
         className="card shadow-lg p-4"
         style={{
-          width: "400px",
+          width: "450px",
           borderRadius: "15px",
         }}
       >
@@ -65,7 +73,7 @@ function Register() {
             fontWeight: "bold",
           }}
         >
-          Horizon Compass
+          JourneyMate
         </h2>
 
         <h4 className="text-center mb-4">
@@ -116,6 +124,68 @@ function Register() {
             value={password}
             onChange={(e) =>
               setPassword(e.target.value)
+            }
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">
+            Age
+          </label>
+
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Enter your age"
+            value={age}
+            onChange={(e) =>
+              setAge(e.target.value)
+            }
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">
+            Gender
+          </label>
+
+          <select
+            className="form-control"
+            value={gender}
+            onChange={(e) =>
+              setGender(e.target.value)
+            }
+          >
+            <option value="">
+              Select Gender
+            </option>
+
+            <option value="Male">
+              Male
+            </option>
+
+            <option value="Female">
+              Female
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">
+            City
+          </label>
+
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter your city"
+            value={city}
+            onChange={(e) =>
+              setCity(e.target.value)
             }
           />
         </div>

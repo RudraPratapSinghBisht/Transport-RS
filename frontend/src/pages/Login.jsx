@@ -102,7 +102,7 @@ if (data.user.role === "admin") {
             fontWeight: "bold",
           }}
         >
-          Horizon Compass
+          Welcome Back!
         </h2>
 
         <h4 className="text-center mb-4">Login</h4>

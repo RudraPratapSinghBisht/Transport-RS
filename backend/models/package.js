@@ -1,15 +1,64 @@
 const mongoose = require("mongoose");
 
-const PackageSchema = new mongoose.Schema({
-  title: String,
-  city: String,
-  country: String,
-  duration: String,
-  price: Number,
-  image: String,
-  description: String,
+const PackageSchema = new mongoose.Schema(
+{
+  name: {
+    type: String,
+    required: true,
+  },
 
-  includes: [String],
-});
+  type: {
+    type: String,
+    required: true,
+  },
 
-module.exports = mongoose.model("Package", PackageSchema);
+  category: {
+    type: String,
+    required: true,
+  },
+
+  city: {
+    type: String,
+    required: true,
+  },
+
+  brand: {
+    type: String,
+  },
+
+  pricePerDay: {
+    type: Number,
+    required: true,
+  },
+
+  fuelType: {
+    type: String,
+  },
+
+  transmission: {
+    type: String,
+  },
+
+  image: {
+    type: String,
+  },
+
+  description: {
+    type: String,
+  },
+
+  featured: {
+    type: Boolean,
+    default: false,
+  },
+},
+{
+  timestamps: true,
+}
+);
+
+module.exports =
+mongoose.model(
+  "Package",
+  PackageSchema
+);

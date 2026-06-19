@@ -2,124 +2,83 @@ import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function Payment() {
   const [paymentMethod, setPaymentMethod] =
     useState("UPI");
 
-  const { cartItems } = useCart();
+  const {
+    cartItems,
+    clearCart,
+  } = useCart();
+
   const navigate = useNavigate();
+
   const total = cartItems.reduce(
-    (sum, item) => sum + item.price,
+    (sum, item) =>
+      sum +
+      Number(item.pricePerDay || 0),
     0
   );
+
 const handlePayment = async () => {
   try {
-    const API_URL =
-      "https://horizon-compass.onrender.com";
 
-    const orderRes =
-      await axios.post(
-        `${API_URL}/api/payment/create-order`,
-        {
-          amount: total,
-        }
-      );
+    const bookingId =
+      "JM" + Date.now();
 
-    const order = orderRes.data;
+    await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/bookings`,
+      {
+        packageId:
+          cartItems[0]?._id || "cart",
 
-    const options = {
-      key: "Q6EFHmn2h5I92AwP1ew8Yfxy",
+        packageTitle:
+          cartItems
+            .map(item => item.name)
+            .join(", "),
 
-      amount: order.amount,
+        price: total,
 
-      currency: order.currency,
+        userName:
+          localStorage.getItem("name"),
 
-      name: "Horizon Compass",
+        email:
+          localStorage.getItem("email"),
 
-      description:
-        "Travel Package Booking",
+        paymentMethod:
+          paymentMethod,
 
-      order_id: order.id,
+        paymentStatus:
+          "Paid",
 
-      handler: async (
-        response
-      ) => {
-        try {
-          const firstItem =
-            cartItems[0];
+        bookingId:
+          bookingId,
+      }
+    );
 
-          await axios.post(
-            `${API_URL}/api/bookings`,
-            {
-              packageId:
-                firstItem?._id ||
-                "cart",
+    toast.success(
+      `Payment Successful! Booking ID: ${bookingId}`
+    );
 
-              packageTitle:
-                cartItems
-                  .map(
-                    (
-                      item
-                    ) =>
-                      item.title
-                  )
-                  .join(", "),
+    clearCart();
 
-              price: total,
+    setTimeout(() => {
+      navigate("/my-bookings");
+    }, 1500);
 
-              userName:
-                localStorage.getItem(
-                  "name"
-                ),
-
-              email:
-                localStorage.getItem(
-                  "email"
-                ),
-
-              paymentId:
-                response.razorpay_payment_id,
-
-              paymentStatus:
-                "Paid",
-            }
-          );
-
-          alert(
-            "Payment Successful!"
-          );
-
-          navigate(
-            "/my-bookings"
-          );
-        } catch (error) {
-          console.error(
-            error
-          );
-        }
-      },
-
-      theme: {
-        color:
-          "#D4AF37",
-      },
-    };
-
-    const razorpay =
-      new window.Razorpay(
-        options
-      );
-
-    razorpay.open();
   } catch (error) {
+
     console.error(error);
 
-    alert(
-      "Payment Failed"
+    toast.error(
+      "Booking Failed"
     );
+
   }
 };
+
   return (
     <div
       style={{
@@ -134,13 +93,11 @@ const handlePayment = async () => {
           <span
             style={{
               backgroundColor: "#D4AF37",
-              color: "#fff",
+              color: "#000",
               padding: "12px 30px",
               borderRadius: "12px",
               fontSize: "2rem",
               fontWeight: "700",
-              boxShadow:
-                "0 4px 15px rgba(212,175,55,0.3)",
             }}
           >
             Payment
@@ -156,7 +113,8 @@ const handlePayment = async () => {
             <div
               className="p-4"
               style={{
-                border: "1px solid #D4AF37",
+                border:
+                  "1px solid #D4AF37",
                 borderRadius: "12px",
               }}
             >
@@ -165,21 +123,22 @@ const handlePayment = async () => {
                   color: "#D4AF37",
                 }}
               >
-                Payment Method
+                Select Payment Method
               </h3>
 
               <div className="form-check mt-4">
                 <input
                   type="radio"
-                  name="paymentMethod"
                   checked={
-                    paymentMethod === "UPI"
+                    paymentMethod ===
+                    "UPI"
                   }
                   onChange={() =>
-                    setPaymentMethod("UPI")
+                    setPaymentMethod(
+                      "UPI"
+                    )
                   }
                 />
-
                 <label className="ms-2">
                   UPI
                 </label>
@@ -188,18 +147,16 @@ const handlePayment = async () => {
               <div className="form-check">
                 <input
                   type="radio"
-                  name="paymentMethod"
                   checked={
                     paymentMethod ===
-                    "Credit / Debit Card"
+                    "Card"
                   }
                   onChange={() =>
                     setPaymentMethod(
-                      "Credit / Debit Card"
+                      "Card"
                     )
                   }
                 />
-
                 <label className="ms-2">
                   Credit / Debit Card
                 </label>
@@ -208,7 +165,6 @@ const handlePayment = async () => {
               <div className="form-check">
                 <input
                   type="radio"
-                  name="paymentMethod"
                   checked={
                     paymentMethod ===
                     "Net Banking"
@@ -219,7 +175,6 @@ const handlePayment = async () => {
                     )
                   }
                 />
-
                 <label className="ms-2">
                   Net Banking
                 </label>
@@ -228,159 +183,41 @@ const handlePayment = async () => {
               <div className="form-check">
                 <input
                   type="radio"
-                  name="paymentMethod"
                   checked={
                     paymentMethod ===
-                    "QR Code"
+                    "Cash"
                   }
                   onChange={() =>
                     setPaymentMethod(
-                      "QR Code"
+                      "Cash"
                     )
                   }
                 />
-
                 <label className="ms-2">
-                  QR Code
+                  Pay At Pickup
                 </label>
               </div>
 
               <hr
                 style={{
-                  borderColor: "#D4AF37",
+                  borderColor:
+                    "#D4AF37",
                 }}
               />
 
-              {/* UPI */}
-
-              {paymentMethod ===
-                "UPI" && (
-                <div className="mt-4">
-
-                  <label className="mb-2">
-                    UPI ID
-                  </label>
-
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="example@upi"
-                  />
-
-                </div>
-              )}
-
-              {/* CARD */}
-
-              {paymentMethod ===
-                "Credit / Debit Card" && (
-                <div className="mt-4">
-
-                  <input
-                    className="form-control mb-3"
-                    placeholder="Card Number"
-                  />
-
-                  <div className="row">
-
-                    <div className="col">
-
-                      <input
-                        className="form-control"
-                        placeholder="MM/YY"
-                      />
-
-                    </div>
-
-                    <div className="col">
-
-                      <input
-                        className="form-control"
-                        placeholder="CVV"
-                      />
-
-                    </div>
-
-                  </div>
-
-                  <input
-                    className="form-control mt-3"
-                    placeholder="Card Holder Name"
-                  />
-
-                </div>
-              )}
-
-              {/* NET BANKING */}
-
-              {paymentMethod ===
-                "Net Banking" && (
-                <div className="mt-4">
-
-                  <select className="form-control">
-
-                    <option>
-                      Select Bank
-                    </option>
-
-                    <option>
-                      SBI
-                    </option>
-
-                    <option>
-                      HDFC
-                    </option>
-
-                    <option>
-                      ICICI
-                    </option>
-
-                    <option>
-                      Axis Bank
-                    </option>
-
-                  </select>
-
-                </div>
-              )}
-
-              {/* QR */}
-
-              {paymentMethod ===
-                "QR Code" && (
-                <div className="mt-4 text-center">
-
-                  <img
-                    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=HorizonCompass"
-                    alt="QR Code"
-                    style={{
-                      borderRadius: "10px",
-                    }}
-                  />
-
-                  <p className="mt-3">
-                    Scan QR using any
-                    UPI app
-                  </p>
-
-                </div>
-              )}
-
-              <div className="mt-4">
-
-                <strong>
-                  Selected Method:
-                </strong>{" "}
-
+              <h5>
+                Selected Method:
                 <span
                   style={{
-                    color: "#D4AF37",
+                    color:
+                      "#D4AF37",
+                    marginLeft:
+                      "10px",
                   }}
                 >
                   {paymentMethod}
                 </span>
-
-              </div>
+              </h5>
 
             </div>
 
@@ -393,7 +230,8 @@ const handlePayment = async () => {
             <div
               className="p-4"
               style={{
-                border: "1px solid #D4AF37",
+                border:
+                  "1px solid #D4AF37",
                 borderRadius: "12px",
               }}
             >
@@ -402,31 +240,85 @@ const handlePayment = async () => {
                   color: "#D4AF37",
                 }}
               >
-                Amount Payable
+                Booking Summary
               </h3>
 
-              <h1>
-                ₹{total.toLocaleString()}
-              </h1>
+              <hr />
 
-          <button
-  className="btn w-100 mt-4"
-  style={{
-    backgroundColor:
-      "#D4AF37",
-    color: "#000",
-    fontWeight: "700",
-  }}
-  onClick={handlePayment}
->
-  Pay Now
-</button>
+              {cartItems.map(
+                (item) => (
+                  <div
+                    key={item._id}
+                    className="mb-3"
+                  >
+                    <strong>
+                      {item.name}
+                    </strong>
+
+                    <br />
+
+                    {item.brand}
+
+                    <br />
+
+                    ₹
+                    {
+                      item.pricePerDay
+                    }
+                    /day
+                  </div>
+                )
+              )}
+
+              <hr />
+
+              <h2>
+                ₹
+                {total.toLocaleString()}
+              </h2>
+
+              <button
+                className="btn w-100 mt-4"
+                style={{
+                  backgroundColor:
+                    "#D4AF37",
+                  color: "#000",
+                  fontWeight: "700",
+                }}
+                onClick={
+                  handlePayment
+                }
+              >
+                Pay Now
+              </button>
 
             </div>
 
           </div>
 
         </div>
+
+        <button
+          onClick={() =>
+            navigate("/")
+          }
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            width: "55px",
+            height: "55px",
+            borderRadius: "50%",
+            backgroundColor:
+              "#000",
+            border:
+              "2px solid #D4AF37",
+            fontSize: "24px",
+            zIndex: "9999",
+          }}
+        >
+          🏠
+        </button>
 
       </div>
     </div>

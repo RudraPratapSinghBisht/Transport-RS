@@ -1,59 +1,76 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 function PackageDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [pkg, setPkg] = useState(null);
-  const { addToCart } = useCart();
+
+  const [vehicle, setVehicle] =
+    useState(null);
+
+  const { addToCart } =
+    useCart();
 
   useEffect(() => {
-    fetchPackage();
+    fetchVehicle();
   }, []);
 
-  const fetchPackage = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/packages/${id}`
-      );
+  const fetchVehicle =
+    async () => {
+      try {
+        const res =
+          await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/packages/${id}`
+          );
 
-      setPkg(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+        setVehicle(
+          res.data
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  if (!pkg) {
+  if (!vehicle) {
     return (
-      <h2 className="text-center mt-5">
+      <h2
+        className="text-center mt-5"
+      >
         Loading...
       </h2>
     );
   }
-const handleAddToCart = () => {
-  addToCart({
-    ...pkg,
-    type: "package",
-  });
-toast.success(
-  `${pkg.title} added to cart`
-);
-  
-};
 
-const handleBooking = () => {
-  addToCart({
-    ...pkg,
-    type: "package",
-  });
+  const handleAddToCart =
+    () => {
+      addToCart({
+        ...vehicle,
+        type:
+          "vehicle",
+      });
 
-  navigate("/cart");
-};
+      toast.success(
+        `${vehicle.name} added to cart`
+      );
+    };
 
- return (
+  const handleBooking =
+    () => {
+      addToCart({
+        ...vehicle,
+        type:
+          "vehicle",
+      });
+
+      navigate("/cart");
+    };
+
+  return (
+
   <div
     style={{
       backgroundColor: "#000",
@@ -61,17 +78,34 @@ const handleBooking = () => {
       minHeight: "100vh",
     }}
   >
-    <img
-      src={pkg.image}
-      alt={pkg.title}
-      style={{
-        width: "100%",
-        height: "500px",
-        objectFit: "cover",
-      }}
-    />
-
     <div className="container py-5">
+
+  <div className="row g-5 align-items-start">
+
+    {/* LEFT SIDE IMAGE */}
+
+    <div className="col-lg-5">
+
+      <img
+        src={vehicle.image}
+        alt={vehicle.name}
+        className="img-fluid"
+        style={{
+          width: "100%",
+          height: "450px",
+          objectFit: "cover",
+          borderRadius: "15px",
+          border: "2px solid #D4AF37",
+          boxShadow:
+            "0 0 20px rgba(212,175,55,0.35)",
+        }}
+      />
+
+    </div>
+
+    {/* RIGHT SIDE DETAILS */}
+
+    <div className="col-lg-7">
 
       <h1
         style={{
@@ -79,28 +113,21 @@ const handleBooking = () => {
           fontWeight: "700",
         }}
       >
-        {pkg.title}
+        {vehicle.name}
       </h1>
 
-      <h4>{pkg.city}</h4>
+      <h4 className="mb-3">
+         {vehicle.city}
+      </h4>
 
-      <div className="mt-4 mb-4">
-
-        <span
-          style={{
-            color: "#D4AF37",
-            fontSize: "2rem",
-            fontWeight: "700",
-          }}
-        >
-          ₹{pkg.price}
-        </span>
-
-        <span className="ms-4">
-          {pkg.duration}
-        </span>
-
-      </div>
+      <h2
+        style={{
+          color: "#D4AF37",
+          fontWeight: "700",
+        }}
+      >
+        ₹{vehicle.pricePerDay}/day
+      </h2>
 
       <hr
         style={{
@@ -113,76 +140,139 @@ const handleBooking = () => {
           color: "#D4AF37",
         }}
       >
-        About This Tour
+        Vehicle Description
       </h3>
 
-      <p>{pkg.description}</p>
+      <p
+        style={{
+          fontSize: "1.05rem",
+          lineHeight: "1.8",
+        }}
+      >
+        {vehicle.description}
+      </p>
+
+      <hr
+        style={{
+          borderColor: "#D4AF37",
+        }}
+      />
 
       <h3
-        className="mt-5"
         style={{
           color: "#D4AF37",
         }}
       >
-        What's Included
+        Vehicle Details
       </h3>
 
-     <ul>
-  {pkg.includes?.map((item, index) => (
-    <li key={index}>
-      {item}
-    </li>
-  ))}
-</ul>
+      <div className="row mt-3">
 
-<div className="d-flex gap-3 mt-4">
+        <div className="col-md-6">
+
+          <p>
+            <strong>Brand:</strong>{" "}
+            {vehicle.brand}
+          </p>
+
+          <p>
+            <strong>Type:</strong>{" "}
+            {vehicle.type}
+          </p>
+
+          <p>
+            <strong>Category:</strong>{" "}
+            {vehicle.category}
+          </p>
+
+        </div>
+
+        <div className="col-md-6">
+
+          <p>
+            <strong>Fuel Type:</strong>{" "}
+            {vehicle.fuelType}
+          </p>
+
+          <p>
+            <strong>Transmission:</strong>{" "}
+            {vehicle.transmission}
+          </p>
+
+          <p>
+            <strong>City:</strong>{" "}
+            {vehicle.city}
+          </p>
+
+        </div>
+
+      </div>
+
+      <div className="d-flex gap-3 mt-4">
+
+        <button
+          className="btn"
+          style={{
+            backgroundColor:
+              "#D4AF37",
+            color: "#000",
+            fontWeight: "700",
+            padding:
+              "12px 35px",
+          }}
+          onClick={
+            handleAddToCart
+          }
+        >
+          Add To Cart
+        </button>
+
+        <button
+          className="btn btn-outline-warning"
+          style={{
+            padding:
+              "12px 35px",
+            fontWeight:
+              "700",
+          }}
+          onClick={
+            handleBooking
+          }
+        >
+          Book Now
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
 
   <button
-    className="btn"
+    onClick={() =>
+      navigate("/")
+    }
     style={{
-      backgroundColor: "#D4AF37",
-      color: "#000",
-      fontWeight: "700",
-      padding: "12px 30px",
+      position: "fixed",
+      bottom: "20px",
+      right: "20px",
+      width: "55px",
+      height: "55px",
+      borderRadius: "50%",
+      backgroundColor: "#000",
+      border:
+        "2px solid #D4AF37",
+      fontSize: "24px",
+      zIndex: "9999",
     }}
-    onClick={handleAddToCart}
   >
-    Add To Cart
-  </button>
-
-  <button
-    className="btn btn-outline-warning"
-    style={{
-      padding: "10px 25px",
-      fontWeight: "600",
-    }}
-    onClick={handleBooking}
-  >
-    Book Now
+    🏠
   </button>
 
 </div>
-<button
-  onClick={() => navigate("/")}
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    width: "50px",
-    height: "50px",
-    borderRadius: "50%",
-    backgroundColor: "#000000",
-    border: "none",
-    fontSize: "24px",
-    fontWeight: "bold",
-    zIndex: "9999",
-  }}
->
-  🏠
-</button>
-      </div>
-    </div>
-  );
+
+  </div>
+);
 }
 
 export default PackageDetails;

@@ -23,15 +23,22 @@ function Home() {
   const [location, setLocation] =
     useState("");
 
+    const [vehicleType, setVehicleType] =
+useState("");
+
+const [budget, setBudget] =
+useState("");
+
   const [hoveredCard, setHoveredCard] =
     useState(null);
 
-  const [featuredPackages,
-    setFeaturedPackages] =
-    useState([]);
+  const [featuredBikes,
+  setFeaturedBikes] =
+  useState([]);
 
-  const [stays, setStays] =
-    useState([]);
+const [featuredCars,
+  setFeaturedCars] =
+  useState([]);
 
   const [stayStart,
     setStayStart] =
@@ -42,32 +49,51 @@ function Home() {
     useState(0);
 
   useEffect(() => {
-    fetchFeaturedPackages();
-    fetchStays();
-  }, []);
+  fetchFeaturedBikes();
+  fetchFeaturedCars();
+}, []);
 
-  const visibleStays =
-    Array.isArray(stays)
-      ? stays.slice(stayStart, stayStart + 3)
-      : [];
+const visibleCars =
+  Array.isArray(
+    featuredCars
+  )
+    ? featuredCars.slice(
+        stayStart,
+        stayStart + 3
+      )
+    : [];
+  
+ const visibleBikes = [
+  featuredBikes[
+    packageStart %
+    Math.max(
+      featuredBikes.length,
+      1
+    )
+  ],
 
-  const visiblePackages = [
-    featuredPackages[
-      packageStart %
-        Math.max(featuredPackages.length, 1)
-    ],
-    featuredPackages[
-      (packageStart + 1) %
-        Math.max(featuredPackages.length, 1)
-    ],
-    featuredPackages[
-      (packageStart + 2) %
-        Math.max(featuredPackages.length, 1)
-    ],
-  ].filter(Boolean);
+  featuredBikes[
+    (packageStart + 1) %
+    Math.max(
+      featuredBikes.length,
+      1
+    )
+  ],
+
+  featuredBikes[
+    (packageStart + 2) %
+    Math.max(
+      featuredBikes.length,
+      1
+    )
+  ],
+].filter(Boolean);
 
   const nextStay = () => {
-    if (stayStart >= stays.length - 3) {
+  if (
+    stayStart >=
+    featuredCars.length - 3
+  ) {
       setStayStart(0);
     } else {
       setStayStart(stayStart + 1);
@@ -77,7 +103,10 @@ function Home() {
   const prevStay = () => {
     if (stayStart === 0) {
       setStayStart(
-        Math.max(stays.length - 3, 0)
+        Math.max(
+  featuredCars.length - 3,
+  0
+)
       );
     } else {
       setStayStart(stayStart - 1);
@@ -86,9 +115,9 @@ function Home() {
 
   const nextPackage = () => {
     if (
-      packageStart >=
-      featuredPackages.length - 3
-    ) {
+ packageStart >=
+ featuredBikes.length - 3
+) {
       setPackageStart(0);
     } else {
       setPackageStart(packageStart + 1);
@@ -99,7 +128,7 @@ function Home() {
     if (packageStart === 0) {
       setPackageStart(
         Math.max(
-          featuredPackages.length - 3,
+          featuredBikes.length - 3,
           0
         )
       );
@@ -107,39 +136,73 @@ function Home() {
       setPackageStart(packageStart - 1);
     }
   };
-
-  const fetchFeaturedPackages =
-    async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/packages`
-        );
-
-        setFeaturedPackages(
-          Array.isArray(res.data)
-            ? res.data
-            : []
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-  const fetchStays = async () => {
+const fetchFeaturedBikes =
+  async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/stays`
+
+      const res =
+        await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/packages/featured-bikes`
+        );
+
+      setFeaturedBikes(
+        res.data
       );
 
-      setStays(
-        Array.isArray(res.data)
-          ? res.data
-          : []
-      );
     } catch (error) {
+
       console.error(error);
+
     }
   };
+
+const fetchFeaturedCars =
+  async () => {
+    try {
+
+      const res =
+        await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/packages/featured-cars`
+        );
+
+      setFeaturedCars(
+        res.data
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+  };
+
+  const handleSearch = () => {
+
+  const params =
+    new URLSearchParams();
+
+  if (location)
+    params.append(
+      "city",
+      location
+    );
+
+  if (vehicleType)
+    params.append(
+      "type",
+      vehicleType
+    );
+
+  if (budget)
+    params.append(
+      "budget",
+      budget
+    );
+
+  navigate(
+    `/packages?${params.toString()}`
+  );
+};
 
   return (
     <>
@@ -190,26 +253,19 @@ function Home() {
               Home
             </Link>
 
-            <Link
-              to="/stays"
-              className="text-white text-decoration-none"
-            >
-              Cars
-            </Link>
+           <Link
+  to="/packages?type=Car"
+  className="text-white text-decoration-none"
+>
+  Cars
+</Link>
 
-            <Link
-              to="/packages"
-              className="text-white text-decoration-none"
-            >
-              Bikes
-            </Link>
-
-            <Link
-              to="/blog"
-              className="text-white text-decoration-none"
-            >
-              Offers
-            </Link>
+           <Link
+  to="/packages?type=Bike"
+  className="text-white text-decoration-none"
+>
+  Bikes
+</Link>
 
             <Link
               to="/cart"
@@ -341,7 +397,7 @@ function Home() {
               marginTop: "20px",
             }}
           >
-            Premium Cars &
+             Cars &
             Bikes Available
             Across India
           </p>
@@ -397,6 +453,11 @@ function Home() {
                   type="text"
                   className="form-control"
                   placeholder="Enter City"
+                    style={{
+    backgroundColor: "#D4AF37",
+    color: "#000000",
+    border: "1px solid #D4AF37",
+  }}
                   value={location}
                   onChange={(e) =>
                     setLocation(
@@ -413,29 +474,48 @@ function Home() {
                   Vehicle Type
                 </label>
 
-                <select className="form-select">
+               <select
+  className="form-select"
+  value={vehicleType}
+  onChange={(e) =>
+    setVehicleType(e.target.value)
+  }
+  style={{
+    backgroundColor: "#D4AF37",
+    color: "#000000",
+    border: "1px solid #D4AF37",
+  }}
+>
+  <option
+    value=""
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+    Select Vehicle
+  </option>
 
-                  <option>
-                    Select Vehicle
-                  </option>
+  <option
+    value="Car"
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+     Car
+  </option>
 
-                  <option>
-                    Car
-                  </option>
-
-                  <option>
-                    Bike
-                  </option>
-
-                  <option>
-                    SUV
-                  </option>
-
-                  <option>
-                    Sports Bike
-                  </option>
-
-                </select>
+  <option
+    value="Bike"
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+    Bike
+  </option>
+</select>
 
               </div>
 
@@ -445,25 +525,68 @@ function Home() {
                   Budget
                 </label>
 
-                <select className="form-select">
+<select
+  className="form-select"
+  value={budget}
+  onChange={(e) =>
+    setBudget(e.target.value)
+  }
+  style={{
+    backgroundColor: "#D4AF37",
+    color: "#000000",
+    border: "1px solid #D4AF37",
+  }}
+>
+  <option
+    value=""
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+    Select Budget
+  </option>
 
-                  <option>
-                    Select Budget
-                  </option>
+  <option
+    value="1000"
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+    Under ₹1000
+  </option>
 
-                  <option>
-                    ₹500 - ₹1,500
-                  </option>
+  <option
+    value="2000"
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+    Under ₹2000
+  </option>
 
-                  <option>
-                    ₹1,500 - ₹3,000
-                  </option>
+  <option
+    value="3000"
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+    Under ₹3000
+  </option>
 
-                  <option>
-                    ₹3,000+
-                  </option>
-
-                </select>
+  <option
+    value="5000"
+    style={{
+      backgroundColor: "#ffffff",
+      color: "#000000",
+    }}
+  >
+    Under ₹5000
+  </option>
+</select>
 
               </div>
 
@@ -478,14 +601,10 @@ function Home() {
                   style={{
                     backgroundColor:
                       "#D4AF37",
-                    color: "#000",
+                    color: "#ffffff",
                     fontWeight: "600",
                   }}
-                  onClick={() =>
-                    navigate(
-                      `/packages?city=${location}`
-                    )
-                  }
+                 onClick={handleSearch}
                 >
                   Search Vehicles
                 </button>
@@ -589,7 +708,7 @@ function Home() {
 
         <div className="row g-4">
 
-          {visiblePackages.map(
+          {visibleBikes.map(
             (pkg) => (
 
               <div
@@ -612,7 +731,7 @@ function Home() {
                   <img
                     src={pkg.image}
                     alt={
-                      pkg.title
+                      pkg.name
                     }
                     className="card-img-top"
                     style={{
@@ -626,7 +745,7 @@ function Home() {
                   <div className="card-body">
 
                     <h4>
-                      {pkg.title}
+                      {pkg.name}
                     </h4>
 
                     <p>
@@ -642,7 +761,7 @@ function Home() {
                       }}
                     >
                       ₹
-                      {pkg.price}
+                      {pkg.pricePerDay}
                       /day
                     </h4>
 
@@ -716,12 +835,12 @@ function Home() {
 
         <div className="row g-4">
 
-          {visibleStays.map(
-            (stay) => (
+          {visibleCars.map(
+            (car) => (
 
               <div
                 className="col-md-4"
-                key={stay._id}
+                key={car._id}
               >
 
                 <div
@@ -736,7 +855,7 @@ function Home() {
                   }}
                   onMouseEnter={() =>
                     setHoveredCard(
-                      stay._id
+                      car._id
                     )
                   }
                   onMouseLeave={() =>
@@ -747,8 +866,8 @@ function Home() {
                 >
 
                   <img
-                    src={stay.image}
-                    alt={stay.title}
+                    src={car.image}
+                    alt={car.name}
                     className="card-img-top"
                     style={{
                       height:
@@ -761,11 +880,11 @@ function Home() {
                   <div className="card-body">
 
                     <h4>
-                      {stay.title}
+                      {car.name}
                     </h4>
 
                     <p>
-                      {stay.city}
+                      {car.city}
                     </p>
 
                     <h5
@@ -775,13 +894,13 @@ function Home() {
                       }}
                     >
                       ₹
-                      {stay.price}
+                      {car.pricePerDay}
                       /day
                     </h5>
 
                     <p>
                       {
-                        stay.description
+                        car.description
                       }
                     </p>
 
@@ -790,7 +909,7 @@ function Home() {
                       style={{
                         backgroundColor:
                           hoveredCard ===
-                          stay._id
+                          car._id
                             ? "#fff"
                             : "#D4AF37",
                         color:
@@ -800,7 +919,7 @@ function Home() {
                       }}
                       onClick={() =>
                         navigate(
-                          `/stays/${stay._id}`
+                          `/packages/${car._id}`
                         )
                       }
                     >
@@ -880,19 +999,34 @@ function Home() {
         <div className="row g-4">
 
           <div className="col-md-3">
-
-            <div
-              className="card text-center p-4"
-              style={{
-                backgroundColor:
-                  "#000000",
-                color:
-                  "#fff",
-                border:
-                  "1px solid #D4AF37",
-              }}
-            >
-              <h3>🚗</h3>
+  <div
+    className="card text-center p-4"
+    onClick={() =>
+      navigate("/packages?category=sedan")
+    }
+    style={{
+      backgroundColor: "#000000",
+      color: "#fff",
+      border: "1px solid #D4AF37",
+      cursor: "pointer",
+      transition: "all 0.3s ease",
+      transform:
+        hoveredCard === "sedan"
+          ? "translateY(-8px)"
+          : "translateY(0)",
+      boxShadow:
+        hoveredCard === "sedan"
+          ? "0 0 20px rgba(212,175,55,0.6)"
+          : "none",
+    }}
+    onMouseEnter={() =>
+      setHoveredCard("sedan")
+    }
+    onMouseLeave={() =>
+      setHoveredCard(null)
+    }
+  >
+              <h3></h3>
 
               <h5>Sedan</h5>
 
@@ -905,19 +1039,34 @@ function Home() {
           </div>
 
           <div className="col-md-3">
-
             <div
               className="card text-center p-4"
+              onClick={() =>
+                navigate("/packages?category=suv")
+              }
               style={{
-                backgroundColor:
-                  "#000000",
-                color:
-                  "#fff",
-                border:
-                  "1px solid #D4AF37",
+                backgroundColor: "#000000",
+                color: "#fff",
+                border: "1px solid #D4AF37",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                transform:
+                  hoveredCard === "suv"
+                    ? "translateY(-8px)"
+                    : "translateY(0)",
+                boxShadow:
+                  hoveredCard === "suv"
+                    ? "0 0 20px rgba(212,175,55,0.6)"
+                    : "none",
               }}
+              onMouseEnter={() =>
+                setHoveredCard("suv")
+              }
+              onMouseLeave={() =>
+                setHoveredCard(null)
+              }
             >
-              <h3>🚙</h3>
+              <h3></h3>
 
               <h5>SUV</h5>
 
@@ -926,48 +1075,80 @@ function Home() {
                 and tours
               </p>
             </div>
-
           </div>
 
           <div className="col-md-3">
-
             <div
               className="card text-center p-4"
+              onClick={() =>
+                navigate(
+                  "/packages?type=bike"
+                )
+              }
               style={{
-                backgroundColor:
-                  "#000000",
-                color:
-                  "#fff",
-                border:
-                  "1px solid #D4AF37",
+                backgroundColor: "#000000",
+                color: "#fff",
+                border: "1px solid #D4AF37",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+                transform:
+                  hoveredCard === "sportsbike"
+                    ? "translateY(-8px)"
+                    : "translateY(0)",
+                boxShadow:
+                  hoveredCard === "sportsbike"
+                    ? "0 0 20px rgba(212,175,55,0.6)"
+                    : "none",
               }}
+              onMouseEnter={() =>
+                setHoveredCard("sportsbike")
+              }
+              onMouseLeave={() =>
+                setHoveredCard(null)
+              }
             >
-              <h3>🏍️</h3>
+              <h3></h3>
 
-              <h5>Sports Bike</h5>
+              <h5>Bike</h5>
 
               <p>
                 High performance
                 rides
               </p>
             </div>
-
           </div>
 
           <div className="col-md-3">
 
-            <div
-              className="card text-center p-4"
-              style={{
-                backgroundColor:
-                  "#000000",
-                color:
-                  "#fff",
-                border:
-                  "1px solid #D4AF37",
-              }}
-            >
-              <h3>🛵</h3>
+           <div
+  className="card text-center p-4"
+  onClick={() =>
+    navigate(
+      "/packages?category=scooter"
+    )
+  }
+  style={{
+    backgroundColor: "#000000",
+    color: "#fff",
+    border: "1px solid #D4AF37",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    transform:
+      hoveredCard === "scooter"
+        ? "translateY(-8px)"
+        : "translateY(0)",
+    boxShadow:
+      hoveredCard === "scooter"
+        ? "0 0 20px rgba(212,175,55,0.6)"
+        : "none",
+  }}
+  onMouseEnter={() =>
+    setHoveredCard("scooter")
+  }
+  onMouseLeave={() =>
+    setHoveredCard(null)
+  }
+>
 
               <h5>Scooter</h5>
 
@@ -1027,7 +1208,7 @@ function Home() {
                     "1px solid #D4AF37",
                 }}
               >
-                <h1>🚘</h1>
+                <h1></h1>
 
                 <h4>
                   Premium Fleet
@@ -1053,7 +1234,7 @@ function Home() {
                     "1px solid #D4AF37",
                 }}
               >
-                <h1>💰</h1>
+                <h1></h1>
 
                 <h4>
                   Best Pricing
@@ -1079,7 +1260,7 @@ function Home() {
                     "1px solid #D4AF37",
                 }}
               >
-                <h1>🛡️</h1>
+                <h1></h1>
 
                 <h4>
                   Fully Insured
@@ -1105,7 +1286,7 @@ function Home() {
                     "1px solid #D4AF37",
                 }}
               >
-                <h1>⚡</h1>
+                <h1></h1>
 
                 <h4>
                   Instant Booking

@@ -5,28 +5,31 @@ import axios from "axios";
 function ManagePackages() {
   const navigate = useNavigate();
 
+  const [vehicles, setVehicles] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [packages, setPackages] = useState([]);
   const [editingId, setEditingId] = useState(null);
 
-  const [packageData, setPackageData] = useState({
-  title: "",
-  city: "",
-  country: "",
-  duration: "",
-  price: "",
-  image: "",
-  description: "",
-  includes: ""
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "Car",
+    category: "",
+    city: "",
+    brand: "",
+    pricePerDay: "",
+    fuelType: "",
+    transmission: "",
+    image: "",
+    description: "",
+    featured: false,
   });
 
-  const fetchPackages = async () => {
+  const fetchVehicles = async () => {
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/packages`
       );
 
-      setPackages(res.data);
+      setVehicles(res.data);
     } catch (error) {
       console.error(error);
     }
@@ -39,85 +42,91 @@ function ManagePackages() {
       navigate("/");
     }
 
-    fetchPackages();
+    fetchVehicles();
   }, [navigate]);
 
-  const handleSavePackage = async () => {
-
-  const formattedPackage = {
-    ...packageData,
-
-    includes: packageData.includes
-      .split("\n")
-      .map(item => item.trim())
-      .filter(Boolean),
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      type: "Car",
+      category: "",
+      city: "",
+      brand: "",
+      pricePerDay: "",
+      fuelType: "",
+      transmission: "",
+      image: "",
+      description: "",
+      featured: false,
+    });
   };
 
-  try {
+  const handleSave = async () => {
+    try {
       if (editingId) {
         await axios.put(
           `${import.meta.env.VITE_API_URL}/api/packages/${editingId}`,
-          formattedPackage
+          formData
         );
 
-        alert("Package Updated Successfully!");
+        alert("Vehicle Updated Successfully");
       } else {
         await axios.post(
           `${import.meta.env.VITE_API_URL}/api/packages`,
-          formattedPackage
+          formData
         );
 
-        alert("Package Added Successfully!");
+        alert("Vehicle Added Successfully");
       }
 
-      setPackageData({
-        title: "",
-        city: "",
-        country: "",
-        duration: "",
-        price: "",
-        image: "",
-        description: "",
-        includes: "",
-      });
+      fetchVehicles();
+
+      resetForm();
 
       setEditingId(null);
-      setShowForm(false);
 
-      fetchPackages();
+      setShowForm(false);
     } catch (error) {
       console.error(error);
-      alert("Failed to save package");
+      alert("Failed To Save Vehicle");
     }
   };
 
-  const handleEditPackage = (pkg) => {
-    setPackageData({
-      title: pkg.title,
-      city: pkg.city,
-      country: pkg.country,
-      duration: pkg.duration,
-      price: pkg.price,
-      image: pkg.image,
-      description: pkg.description,
-      includes: Array.isArray(pkg.includes)
-  ? pkg.includes.join("\n")
-  : "",
+  const handleEdit = (vehicle) => {
+    setEditingId(vehicle._id);
+
+    setFormData({
+      name: vehicle.name || "",
+      type: vehicle.type || "Car",
+      category: vehicle.category || "",
+      city: vehicle.city || "",
+      brand: vehicle.brand || "",
+      pricePerDay: vehicle.pricePerDay || "",
+      fuelType: vehicle.fuelType || "",
+      transmission: vehicle.transmission || "",
+      image: vehicle.image || "",
+      description: vehicle.description || "",
+      featured: vehicle.featured || false,
     });
 
-    setEditingId(pkg._id);
     setShowForm(true);
   };
 
-  const handleDeletePackage = async (id) => {
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Delete this vehicle?"
+    );
+
+    if (!confirmDelete) return;
+
     try {
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/packages/${id}`
       );
 
-      alert("Package Deleted Successfully!");
+      alert("Vehicle Deleted");
 
-      fetchPackages();
+      fetchVehicles();
     } catch (error) {
       console.error(error);
     }
@@ -125,283 +134,340 @@ function ManagePackages() {
 
   return (
     <div
+  style={{
+    minHeight: "100vh",
+    backgroundColor: "#000",
+    color: "white",
+    padding: "30px",
+  }}
+>
+  <div className="d-flex justify-content-between align-items-center mb-4">
+
+    <h1
       style={{
-        minHeight: "100vh",
-        backgroundColor: "#000000",
-        color: "white",
-        padding: "30px",
+        color: "#D4AF37",
+        fontWeight: "bold",
       }}
     >
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1
-          style={{
-            color: "#D4AF37",
-            fontWeight: "bold",
-          }}
-        >
-          Manage Packages
-        </h1>
+      Manage Vehicles
+    </h1>
 
-        <button
-          className="btn"
-          style={{
-            backgroundColor: "#D4AF37",
-            color: "#000",
-            fontWeight: "bold",
-          }}
-          onClick={() => {
-            setEditingId(null);
+    <button
+      className="btn"
+      style={{
+        backgroundColor: "#D4AF37",
+        color: "#000",
+        fontWeight: "bold",
+      }}
+      onClick={() => {
+        resetForm();
+        setEditingId(null);
+        setShowForm(!showForm);
+      }}
+    >
+      + Add Vehicle
+    </button>
 
-            setPackageData({
-              title: "",
-              city: "",
-              country: "",
-              duration: "",
-              price: "",
-              image: "",
-              description: "",
-              includes: "",
-            });
+  </div>
 
-            setShowForm(!showForm);
-          }}
-        >
-          + Add Package
-        </button>
-      </div>
+  {showForm && (
 
-      {showForm && (
-        <div
-          className="card p-4 mb-4"
-          style={{
-            backgroundColor: "#194084",
-            color: "white",
-            border: "1px solid #d59f09",
-          }}
-        >
-          <h3
-            className="mb-3"
-            style={{ color: "#D4AF37" }}
-          >
-            {editingId
-              ? "Edit Package"
-              : "Add New Package"}
-          </h3>
+    <div
+      className="card p-4 mb-4"
+      style={{
+        backgroundColor: "#194084",
+        border: "2px solid #D4AF37",
+      }}
+    >
 
-          <div className="row">
-            <div className="col-md-6 mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Package Title"
-                value={packageData.title}
-                onChange={(e) =>
-                  setPackageData({
-                    ...packageData,
-                    title: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="col-md-6 mb-3">
-                            <input
-                type="text"
-                className="form-control"
-                placeholder="City"
-                value={packageData.city}
-                onChange={(e) =>
-                  setPackageData({
-                    ...packageData,
-                    city: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div className="col-md-6 mb-3">
-  <input
-    type="text"
-    className="form-control"
-    placeholder="Country"
-    value={packageData.country}
-    onChange={(e) =>
-      setPackageData({
-        ...packageData,
-        country: e.target.value,
-      })
-    }
-  />
-</div>
-
-            <div className="col-md-6 mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Duration"
-                value={packageData.duration}
-                onChange={(e) =>
-                  setPackageData({
-                    ...packageData,
-                    duration: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="col-md-6 mb-3">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Price"
-                value={packageData.price}
-                onChange={(e) =>
-                  setPackageData({
-                    ...packageData,
-                    price: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="col-12 mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Image URL"
-                value={packageData.image}
-                onChange={(e) =>
-                  setPackageData({
-                    ...packageData,
-                    image: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="col-12 mb-3">
-              <textarea
-                className="form-control"
-                rows="4"
-                placeholder="Description"
-                value={packageData.description}
-                onChange={(e) =>
-                  setPackageData({
-                    ...packageData,
-                    description: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div className="col-12 mb-3">
-  <textarea
-    className="form-control"
-    rows="4"
-    placeholder="Includes (one per line)"
-    value={packageData.includes}
-    onChange={(e) =>
-      setPackageData({
-        ...packageData,
-        includes: e.target.value,
-      })
-    }
-  />
-</div>
-
-            <div className="col-12">
-              <button
-                className="btn"
-                style={{
-                  backgroundColor: "#D4AF37",
-                  color: "#000",
-                  fontWeight: "bold",
-                }}
-                onClick={handleSavePackage}
-              >
-                {editingId
-                  ? "Update Package"
-                  : "Save Package"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <h3
+        className="mb-4"
+        style={{
+          color: "#D4AF37",
+        }}
+      >
+        {editingId
+          ? "Edit Vehicle"
+          : "Add New Vehicle"}
+      </h3>
 
       <div className="row">
-        {packages.map((pkg) => (
-          <div
-            key={pkg._id}
-            className="col-md-4 mb-4"
+
+        <div className="col-md-6 mb-3">
+          <input
+            className="form-control"
+            placeholder="Vehicle Name"
+            value={formData.name}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                name: e.target.value,
+              })
+            }
+          />
+        </div>
+
+        <div className="col-md-6 mb-3">
+          <select
+            className="form-control"
+            value={formData.type}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                type: e.target.value,
+              })
+            }
           >
-            <div
-              className="card h-100"
-              style={{
-                backgroundColor: "#000000",
-                color: "white",
-                border: "3px solid #164598",
-              }}
-            >
-              <img
-                src={pkg.image}
-                alt={pkg.title}
-                style={{
-                  height: "220px",
-                  objectFit: "cover",
-                }}
-              />
+            <option value="Car">
+              Car
+            </option>
 
-              <div className="card-body">
-                <h4
-                  style={{
-                    color: "#D4AF37",
-                  }}
-                >
-                  {pkg.title}
-                </h4>
+            <option value="Bike">
+              Bike
+            </option>
+          </select>
+        </div>
 
-                <p>
-                  <strong>City:</strong> {pkg.city}
-                </p>
-                <p>
-                  <strong>Country:</strong> {pkg.country}
-                </p>
+        <div className="col-md-6 mb-3">
+          <input
+            className="form-control"
+            placeholder="Category"
+            value={formData.category}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                category: e.target.value,
+              })
+            }
+          />
+        </div>
 
-                <p>
-                  <strong>Duration:</strong> {pkg.duration}
-                </p>
+        <div className="col-md-6 mb-3">
+          <input
+            className="form-control"
+            placeholder="City"
+            value={formData.city}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                city: e.target.value,
+              })
+            }
+          />
+        </div>
 
-                <p>
-                  <strong>Price:</strong> ₹{pkg.price}
-                </p>
+        <div className="col-md-6 mb-3">
+          <input
+            className="form-control"
+            placeholder="Brand"
+            value={formData.brand}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                brand: e.target.value,
+              })
+            }
+          />
+        </div>
 
-                <p>{pkg.description}</p>
+        <div className="col-md-6 mb-3">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Price Per Day"
+            value={formData.pricePerDay}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                pricePerDay: e.target.value,
+              })
+            }
+          />
+        </div>
+                <div className="col-md-6 mb-3">
+          <input
+            className="form-control"
+            placeholder="Fuel Type"
+            value={formData.fuelType}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                fuelType: e.target.value,
+              })
+            }
+          />
+        </div>
 
-                <p>
-                  <strong>Includes:</strong>
-                </p>
+        <div className="col-md-6 mb-3">
+          <input
+            className="form-control"
+            placeholder="Transmission"
+            value={formData.transmission}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                transmission: e.target.value,
+              })
+            }
+          />
+        </div>
 
-                <button
-                  className="btn btn-warning w-100 mb-2"
-                  onClick={() =>
-                    handleEditPackage(pkg)
-                  }
-                >
-                  Edit Package
-                </button>
+        <div className="col-12 mb-3">
+          <input
+            className="form-control"
+            placeholder="Image URL"
+            value={formData.image}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                image: e.target.value,
+              })
+            }
+          />
+        </div>
 
-                <button
-                  className="btn btn-danger w-100"
-                  onClick={() =>
-                    handleDeletePackage(pkg._id)
-                  }
-                >
-                  Delete Package
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+        <div className="col-12 mb-3">
+          <textarea
+            rows="4"
+            className="form-control"
+            placeholder="Description"
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                description: e.target.value,
+              })
+            }
+          />
+        </div>
+
+        <div className="col-12 mb-3">
+          <label>
+            <input
+              type="checkbox"
+              checked={formData.featured}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  featured: e.target.checked,
+                })
+              }
+            />
+            {" "}Featured Vehicle
+          </label>
+        </div>
+
+        <div className="col-12">
+          <button
+            className="btn"
+            style={{
+              backgroundColor: "#D4AF37",
+              color: "#000",
+              fontWeight: "bold",
+            }}
+            onClick={handleSave}
+          >
+            {editingId
+              ? "Update Vehicle"
+              : "Save Vehicle"}
+          </button>
+        </div>
+
       </div>
     </div>
+  )}
+
+  <div className="row">
+
+    {vehicles.map((vehicle) => (
+
+      <div
+        key={vehicle._id}
+        className="col-md-4 mb-4"
+      >
+        <div
+          className="card h-100"
+          style={{
+            backgroundColor: "#000",
+            color: "white",
+            border: "2px solid #194084",
+          }}
+        >
+
+          <img
+            src={vehicle.image}
+            alt={vehicle.name}
+            style={{
+              height: "220px",
+              objectFit: "cover",
+            }}
+          />
+
+          <div className="card-body">
+
+            <h4
+              style={{
+                color: "#D4AF37",
+              }}
+            >
+              {vehicle.name}
+            </h4>
+
+            <p>
+              <strong>Type:</strong>{" "}
+              {vehicle.type}
+            </p>
+
+            <p>
+              <strong>Category:</strong>{" "}
+              {vehicle.category}
+            </p>
+
+            <p>
+              <strong>City:</strong>{" "}
+              {vehicle.city}
+            </p>
+
+            <p>
+              <strong>Brand:</strong>{" "}
+              {vehicle.brand}
+            </p>
+
+            <p>
+              ₹{vehicle.pricePerDay}/day
+            </p>
+
+            <p>
+              {vehicle.description}
+            </p>
+
+            <button
+              className="btn btn-warning w-100 mb-2"
+              onClick={() =>
+                handleEdit(vehicle)
+              }
+            >
+              Edit Vehicle
+            </button>
+
+            <button
+              className="btn btn-danger w-100"
+              onClick={() =>
+                handleDelete(vehicle._id)
+              }
+            >
+              Delete Vehicle
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
   );
 }
 
