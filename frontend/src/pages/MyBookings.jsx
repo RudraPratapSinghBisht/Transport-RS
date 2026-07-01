@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "../services/api";
 
 function MyBookings() {
 const [bookings, setBookings] = useState([]);
@@ -24,7 +25,7 @@ localStorage.getItem("email");
   }
 
   const res = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/bookings/user/${email}`
+    apiUrl(`bookings/user/${email}`)
   );
 
   setBookings(res.data);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { apiUrl } from "../services/api";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function AdminDashboard() {
   const fetchDashboardStats = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/dashboard`
+        apiUrl("dashboard")
       );
 
       setStats(res.data);

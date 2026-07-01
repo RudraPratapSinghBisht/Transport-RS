@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { apiUrl } from "../services/api";
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
@@ -11,7 +12,7 @@ function ManageUsers() {
   const fetchUsers = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/auth/users`
+        apiUrl("auth/users")
       );
 
       setUsers(res.data);
@@ -23,7 +24,7 @@ function ManageUsers() {
   const makeAdmin = async (id) => {
     try {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/auth/make-admin/${id}`
+        apiUrl(`auth/make-admin/${id}`)
       );
 
       fetchUsers();

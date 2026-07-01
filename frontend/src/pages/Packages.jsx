@@ -4,6 +4,7 @@ useNavigate,
 useLocation,
 } from "react-router-dom";
 import axios from "axios";
+import { apiUrl } from "../services/api";
 
 function Packages() {
 const navigate = useNavigate();
@@ -43,7 +44,7 @@ const fetchVehicles = async () => {
     setLoading(true);
 
     let url =
-      `${import.meta.env.VITE_API_URL}/api/packages`;
+      apiUrl("packages");
 
     console.log("Fetching:", url);
 

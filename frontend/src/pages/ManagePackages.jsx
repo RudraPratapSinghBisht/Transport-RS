@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { apiUrl } from "../services/api";
 
 function ManagePackages() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function ManagePackages() {
   const fetchVehicles = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/packages`
+        apiUrl("packages")
       );
 
       setVehicles(res.data);
@@ -65,14 +66,14 @@ function ManagePackages() {
     try {
       if (editingId) {
         await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/packages/${editingId}`,
+          apiUrl(`packages/${editingId}`),
           formData
         );
 
         alert("Vehicle Updated Successfully");
       } else {
         await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/packages`,
+          apiUrl("packages"),
           formData
         );
 
@@ -121,7 +122,7 @@ function ManagePackages() {
 
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/packages/${id}`
+        apiUrl(`packages/${id}`)
       );
 
       alert("Vehicle Deleted");

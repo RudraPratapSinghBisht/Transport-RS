@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import axios from "axios";
+import { apiUrl } from "../services/api";
 
 function ManageStays() {
   const [stays, setStays] = useState([]);
@@ -33,7 +34,7 @@ const [description, setDescription] =
   const fetchStays = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/stays`
+        apiUrl("stays")
       );
 
       setStays(response.data);
@@ -44,7 +45,7 @@ const [description, setDescription] =
   const addStay = async () => {
   try {
     await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/stays`,
+      apiUrl("stays"),
       {
         title,
         category,

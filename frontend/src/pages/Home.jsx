@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import axios from "axios";
+import { apiUrl } from "../services/api";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 import compassLogo from "../assets/compass.png";
 import HeroImage from "../assets/HeroImage.jpg";
@@ -28,6 +30,9 @@ useState("");
 
 const [budget, setBudget] =
 useState("");
+
+  const [mobileMenuOpen, setMobileMenuOpen] =
+    useState(false);
 
   const [hoveredCard, setHoveredCard] =
     useState(null);
@@ -142,7 +147,7 @@ const fetchFeaturedBikes =
 
       const res =
         await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/packages/featured-bikes`
+          apiUrl("packages/featured-bikes")
         );
 
       setFeaturedBikes(
@@ -162,7 +167,7 @@ const fetchFeaturedCars =
 
       const res =
         await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/packages/featured-cars`
+          apiUrl("packages/featured-cars")
         );
 
       setFeaturedCars(
@@ -206,143 +211,136 @@ const fetchFeaturedCars =
 
   return (
     <>
-      <nav
-        className="navbar navbar-expand-lg navbar-dark"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          zIndex: 1000,
-          background: "transparent",
-          padding: "20px 0",
-        }}
-      >
-        <div className="container">
-
+      <nav className="jm-navbar navbar navbar-dark">
+        <div className="container jm-navbar-inner">
           <Link
             to="/"
-            className="navbar-brand fw-bold d-flex align-items-center"
-            style={{
-              color: "#D4AF37",
-              fontSize: "1.8rem",
-              gap: "10px",
-            }}
+            className="jm-brand navbar-brand fw-bold"
+            onClick={() => setMobileMenuOpen(false)}
           >
             <img
               src={compassLogo}
               alt="JOURNEY MATE"
-              style={{
-                width: "115px",
-                height: "70px",
-                objectFit: "contain",
-              }}
+              className="jm-brand-logo"
             />
 
-            <span>
+            <span className="jm-brand-text">
               JOURNEY MATE
             </span>
           </Link>
 
-          <div className="d-flex gap-4">
-
-            <Link
-              to="/"
-              className="text-white text-decoration-none"
-            >
-              Home
-            </Link>
-
-           <Link
-  to="/packages?type=Car"
-  className="text-white text-decoration-none"
->
-  Cars
-</Link>
-
-           <Link
-  to="/packages?type=Bike"
-  className="text-white text-decoration-none"
->
-  Bikes
-</Link>
-
-            <Link
-              to="/cart"
-              className="text-white text-decoration-none"
-            >
-              Cart ({cartItems.length})
-            </Link>
-
-          </div>
-
-          <div className="d-flex align-items-center gap-2">
-
-            {isLoggedIn ? (
-              <>
-                <span
-                  style={{
-                    color: "#D4AF37",
-                    fontWeight: "600",
-                  }}
-                >
-                  Welcome, {userName}
-                </span>
-
-                <Link
-                  to="/my-bookings"
-                  className="btn btn-outline-light"
-                >
-                  My Rentals
-                </Link>
-
-                <button
-                  className="btn"
-                  style={{
-                    backgroundColor:
-                      "#DC3545",
-                    color: "#fff",
-                  }}
-                  onClick={() => {
-                    localStorage.clear();
-                    window.location.href = "/";
-                  }}
-                >
-                  Logout
-                </button>
-              </>
+          <button
+            className="jm-menu-toggle d-lg-none"
+            type="button"
+            aria-label={
+              mobileMenuOpen
+                ? "Close navigation"
+                : "Open navigation"
+            }
+            aria-expanded={mobileMenuOpen}
+            onClick={() =>
+              setMobileMenuOpen(!mobileMenuOpen)
+            }
+          >
+            {mobileMenuOpen ? (
+              <FaTimes />
             ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="btn btn-outline-light"
-                >
-                  Login
-                </Link>
-
-                <Link
-                  to="/register"
-                  className="btn"
-                  style={{
-                    backgroundColor:
-                      "#D4AF37",
-                    color: "#000",
-                  }}
-                >
-                  Register
-                </Link>
-              </>
+              <FaBars />
             )}
+          </button>
 
+          <div
+            className={`jm-nav-panel ${
+              mobileMenuOpen ? "is-open" : ""
+            }`}
+          >
+            <div className="jm-nav-links">
+              <Link
+                to="/"
+                className="jm-nav-link"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+
+              <Link
+                to="/packages?type=Car"
+                className="jm-nav-link"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Cars
+              </Link>
+
+              <Link
+                to="/packages?type=Bike"
+                className="jm-nav-link"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Bikes
+              </Link>
+
+              <Link
+                to="/cart"
+                className="jm-nav-link"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Cart ({cartItems.length})
+              </Link>
+            </div>
+
+            <div className="jm-auth-actions">
+              {isLoggedIn ? (
+                <>
+                  <span className="jm-user-greeting">
+                    Welcome, {userName}
+                  </span>
+
+                  <Link
+                    to="/my-bookings"
+                    className="btn btn-outline-light"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Rentals
+                  </Link>
+
+                  <button
+                    className="btn jm-logout-btn"
+                    onClick={() => {
+                      localStorage.clear();
+                      window.location.href = "/";
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="btn btn-outline-light"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+
+                  <Link
+                    to="/register"
+                    className="btn jm-register-btn"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
-
         </div>
       </nav>
 
       <section
+        className="jm-hero"
         style={{
           width: "100%",
-          height: "104.5vh",
           position: "relative",
           overflow: "hidden",
         }}
@@ -369,7 +367,7 @@ const fetchFeaturedCars =
         />
 
         <div
-          className="text-center text-white"
+          className="jm-hero-content text-center text-white"
           style={{
             position: "relative",
             zIndex: 2,
@@ -383,8 +381,8 @@ const fetchFeaturedCars =
           }}
         >
           <h1
+            className="jm-hero-title"
             style={{
-              fontSize: "4rem",
               fontWeight: "700",
             }}
           >
@@ -392,8 +390,8 @@ const fetchFeaturedCars =
           </h1>
 
           <p
+            className="jm-hero-subtitle"
             style={{
-              fontSize: "1.3rem",
               marginTop: "20px",
             }}
           >
@@ -403,7 +401,7 @@ const fetchFeaturedCars =
           </p>
 
           <button
-            className="btn mt-4"
+            className="jm-hero-button btn mt-4"
             style={{
               backgroundColor:
                 "#D4AF37",
@@ -628,6 +626,7 @@ const fetchFeaturedCars =
       >
 
         <div
+          className="jm-section-heading"
           style={{
             position: "relative",
             marginBottom: "40px",
@@ -636,6 +635,7 @@ const fetchFeaturedCars =
         >
 
           <span
+            className="jm-section-title"
             style={{
               backgroundColor:
                 "#D4AF37",
@@ -656,6 +656,7 @@ const fetchFeaturedCars =
           </span>
 
           <div
+            className="jm-section-controls"
             style={{
               position:
                 "absolute",
@@ -669,7 +670,7 @@ const fetchFeaturedCars =
           >
 
             <button
-              className="btn"
+              className="jm-arrow-control btn"
               onClick={
                 prevPackage
               }
@@ -686,7 +687,7 @@ const fetchFeaturedCars =
             </button>
 
             <button
-              className="btn"
+              className="jm-arrow-control btn"
               onClick={
                 nextPackage
               }
@@ -811,9 +812,10 @@ const fetchFeaturedCars =
         }}
       >
 
-        <div className="text-center mb-5">
+        <div className="jm-section-heading text-center mb-5">
 
           <span
+            className="jm-section-title"
             style={{
               backgroundColor:
                 "#D4AF37",
@@ -937,10 +939,10 @@ const fetchFeaturedCars =
 
         </div>
 
-        <div className="text-center mt-4">
+        <div className="jm-inline-controls text-center mt-4">
 
           <button
-            className="btn me-3"
+            className="jm-small-arrow-control btn me-3"
             style={{
               backgroundColor:
                 "#D4AF37",
@@ -952,7 +954,7 @@ const fetchFeaturedCars =
           </button>
 
           <button
-            className="btn"
+            className="jm-small-arrow-control btn"
             style={{
               backgroundColor:
                 "#D4AF37",
@@ -976,9 +978,10 @@ const fetchFeaturedCars =
         }}
       >
 
-        <div className="text-center mb-5">
+        <div className="jm-section-heading text-center mb-5">
 
           <span
+            className="jm-section-title"
             style={{
               backgroundColor:
                 "#D4AF37",

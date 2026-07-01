@@ -3,6 +3,7 @@ import axios from "axios";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { apiUrl } from "../services/api";
 
 function Checkout() {
   const {
@@ -34,7 +35,7 @@ const handlePayment = async () => {
     const firstItem = cartItems[0];
 
     await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/bookings`,
+      apiUrl("bookings"),
      {
   packageId: firstItem?._id || "cart",
 

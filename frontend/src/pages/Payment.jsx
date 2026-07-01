@@ -3,6 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { apiUrl } from "../services/api";
 
 function Payment() {
   const [paymentMethod, setPaymentMethod] =
@@ -29,7 +30,7 @@ const handlePayment = async () => {
       "JM" + Date.now();
 
     await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/bookings`,
+      apiUrl("bookings"),
       {
         packageId:
           cartItems[0]?._id || "cart",

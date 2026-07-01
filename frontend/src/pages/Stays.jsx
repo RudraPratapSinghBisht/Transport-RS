@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { apiUrl } from "../services/api";
 
 function Stays() {
   const [stays, setStays] = useState([]);
@@ -17,7 +18,7 @@ function Stays() {
   const fetchStays = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/stays`
+        apiUrl("stays")
       );
 
       setStays(res.data);

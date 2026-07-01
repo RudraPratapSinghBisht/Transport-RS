@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { apiUrl } from "../services/api";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -10,7 +11,7 @@ function Login() {
   const handleLogin = async () => {
     try {
      const response = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/auth/login`,
+  apiUrl("auth/login"),
         {
           method: "POST",
           headers: {

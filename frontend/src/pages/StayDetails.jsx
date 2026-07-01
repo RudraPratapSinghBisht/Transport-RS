@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { apiUrl } from "../services/api";
 
 function StayDetails() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ function StayDetails() {
   const fetchStay = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/stays/${id}`
+        apiUrl(`stays/${id}`)
       );
 
       setStay(res.data);
